@@ -1,0 +1,6 @@
+
+
+1: setup raspicam
+2: setup netcam from opencv images
+3: create a navigator
+4: create a
