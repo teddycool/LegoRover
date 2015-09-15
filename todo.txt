@@ -3,4 +3,5 @@
 1: setup raspicam
 2: setup netcam from opencv images
 3: create a navigator
-4: create a
+4: create a threaded publish-subscribe for sensor-values to the main-loop
+5:

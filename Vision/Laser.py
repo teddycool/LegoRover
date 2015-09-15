@@ -1,5 +1,4 @@
-__author__ = 'psk'
-
+__author__ = 'teddycool'
 
 class Laser(object):
     def __init__(self, GPIO, controlpin):
@@ -17,7 +16,7 @@ if __name__ == '__main__':
     import RPi.GPIO as GPIO
     GPIO.setmode(GPIO.BCM)
     import time
-    laser = Laser(GPIO, 20)
+    laser = Laser(GPIO, 21)
     laser.activate(True)
     time.sleep(2)
     laser.activate(False)

@@ -1,4 +1,4 @@
-__author__ = 'psk'
+__author__ = 'teddycool'
 
 #logic for driving...
 #using MotorControl and sensor values

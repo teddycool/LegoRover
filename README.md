@@ -1,3 +1,3 @@
 # legorover
-Using WebIOPi as interface for controlling the rover.
-Scripts and macros will be used 'onboard' for handling GPIOs and measurements.
+Autonomous legorover...
+Using sensors and openCV for image analyze and obstacle detection. The openCV stream is sent to a mjpeg streamer that can be viewed in a webbrowser (firefox) on the same network.

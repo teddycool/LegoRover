@@ -1,17 +1,18 @@
 __author__ = 'teddycool'
+#http://blog.miguelgrinberg.com/post/stream-video-from-the-raspberry-pi-camera-to-web-browsers-even-on-ios-and-android
 import pygame
 import pygame.camera
-import DartScoreConfig
+import picamera
 
 class Cam(object):
     def __init__(self):
-        print "Cam __init__"
-        self.camid= DartScoreConfig.config['cam']['id']
-        self.width, self.height= DartScoreConfig.config['cam']['res']
+        print "Vision __init__"
+        self.camid= 0
+        self.width, self.height= (1024,768)
 
 
     def initialize(self):
-        print "Cam initialize: " + str(self.camid)
+        print "Vision initialize: " + str(self.camid)
         #Init and set up variables...
         pygame.camera.init()
         self.csnapshot = pygame.surface.Surface((self.width,self.height),0) #current frame
@@ -40,11 +41,16 @@ if __name__ == "__main__":
     #time.sleep(5)
     img=pygame.surface.Surface((cam.width,cam.height),0)
     t=0
-    while t < 100:
+    while 1:
         snapshot = cam.update()
-        t= t+1
-    snapshot = pygame.transform.rotate(snapshot,90)
-    snapshot = pygame.transform.flip(snapshot, 0, 1)
-    cv2.imshow('img',pygame.surfarray.pixels3d(snapshot))
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+        snapshot = pygame.transform.rotate(snapshot,90)
+        snapshot = pygame.transform.flip(snapshot, 0, 1)
+        img = pygame.surfarray.pixels3d(snapshot)
+        cv2.imwrite('/temp/stream/pic.jpg',img,)
+        #cv2.imshow('img',img)
+        time.sleep(0.1)
+        #http://docs.opencv.org/modules/core/doc/drawing_functions.html#puttext
+        #cv2.putText(img,"Testing","Arial", 12,1,(250,250,250),2,None,None)
+
+        #cv2.waitKey(0)
+        #cv2.destroyAllWindows()

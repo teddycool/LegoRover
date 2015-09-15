@@ -1,42 +1,43 @@
-__author__ = 'psk'
+__author__ = 'teddycool'
 #Manage all sensors
 import RangeSensor
+import copy
+import time
+import config
 
 class Sensors(object):
     def __init__(self):
-        import copy
         self.sensorvaluesdict={}
         valuesdict = {"Current": 0, "TrendList": []}
-        measurements = ["IndoorTemp","OutdoorTemp", "IndoorHum", "OutdoorHum", "OutdoorBar","FridgeTempUpper", "FridgeTempLower", "FreezerTemp"]
-        for meassure in measurements:
-            self.sensorvaluesdict[meassure]= copy.deepcopy(valuesdict)
-
+        sensors = ["UsFrontDistance", "IrFrontDistance",]
+        for sensor in sensors:
+            self.sensorvaluesdict[sensor]= copy.deepcopy(valuesdict)
+        print "Created values dictionary..."
         self._rangeFwd=RangeSensor()
-
-        return
 
     def initialize(self):
         #connect each variable to the sensor and value
-        #self._updateValues()
-        return
+        self._updateValues()
 
     def update(self):
          self._updateValues()
-         return
 
 
     def update(self):
          self._updateValues()
-         return
 
     def _updateValues(self):
-        print "Updating sensor values"
-        #Read values from sensor with more then one returnvalue
-        indoor= self._indoor.read()
-        outdoor = self._outdoor.read()
-        self.sensorvaluesdict["FridgeTempUpper"]["Current"] = self._fridgeSensorUpper.read_temp()[0]
-        self.sensorvaluesdict["OutdoorBar"]["Current"] = self._outdoorBar.readPressure()
-        self.sensorvaluesdict["IndoorHum"]["Current"] = indoor[0]
-        self.sensorvaluesdict["IndoorTemp"]["Current"] = indoor[1]
-        self.sensorvaluesdict["OutdoorHum"]["Current"] = outdoor[0]
-        self.sensorvaluesdict["OutdoorTemp"]["Current"] = outdoor[1]
+        print "Updating sensor values started: " + str(time.time())
+        self.sensorvaluesdict["UsFrontDistance"]["Current"] = self._rangeFwd.Meassure()
+
+        for key in self.sensorvaluesdict:
+            self.sensorvaluesdict[key]["TrendList"] = self._updateValuesList(self.sensorvaluesdict[key]["Current"], self.sensorvaluesdict[key]["TrendList"] )
+        print "Updating sensor values finished: " + str(time.time())
+
+    def _updateValuesList(self,value, valuelist):
+        if value != "N/A":
+            valuelist.append(float(value))
+            if (len(valuelist)> 10):
+                poped = valuelist.pop(0)
+        return valuelist
+
