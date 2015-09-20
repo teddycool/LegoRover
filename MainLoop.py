@@ -7,6 +7,7 @@ from Sensors import Sensors
 from Driver import MotorControl
 from Vision import Vision
 
+#Global GPIO used by all...
 import RPi.GPIO as GPIO
 
 class MainLoop(object):
@@ -15,8 +16,6 @@ class MainLoop(object):
         GPIO.setmode(GPIO.BCM)
         self._driver = MotorControl.MotorControl(GPIO)
         self._sensors = Sensors()
-
-
 
 
     def initialize(self):
@@ -36,9 +35,8 @@ class MainLoop(object):
 
 
     def update(self,screen):
-
-        pos = 0
-        return pos
+        self._sensors.update()
+        return
 
     def draw(self, screen):
         return

@@ -15,10 +15,22 @@ class MotorControl(object):
     def start(self):
         self._controlStates['LeftOn']=True
         self._controlStates['RightOn'] = True
+        self._controlStates['LeftRev']=False
+        self._controlStates['RightRev'] = False
 
     def stop(self):
         self._controlStates['LeftOn']=False
         self._controlStates['RightOn'] = False
+        self._controlStates['LeftRev']=False
+        self._controlStates['RightRev'] = False
+
+    def right(self):
+        self._controlStates['LeftOn']=True
+        self._controlStates['RightRev'] = True
+
+    def left(self):
+        self._controlStates['LeftRev']=True
+        self._controlStates['RightOn'] = True
 
     def update(self):
         self._setMotorStates()
@@ -38,6 +50,12 @@ if __name__ == '__main__':
     import time
     mc= MotorControl(GPIO)
     mc.start()
+    mc.update()
+    time.sleep(2)
+    mc.stop()
+    mc.update()
+    time.sleep(2)
+    mc.right()
     mc.update()
     time.sleep(2)
     mc.stop()

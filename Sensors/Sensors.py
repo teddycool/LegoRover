@@ -4,6 +4,10 @@ import RangeSensor
 import copy
 import time
 import config
+import Compass
+import AccelGyro
+import cv2
+
 
 class Sensors(object):
     def __init__(self):
@@ -19,12 +23,13 @@ class Sensors(object):
         #connect each variable to the sensor and value
         self._updateValues()
 
-    def update(self):
-         self._updateValues()
-
 
     def update(self):
          self._updateValues()
+
+    def draw(self, frame):
+        #Print sensorvalues to streamer lib for debug...
+        return
 
     def _updateValues(self):
         print "Updating sensor values started: " + str(time.time())
