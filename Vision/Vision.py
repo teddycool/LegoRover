@@ -13,6 +13,7 @@ import LaserFinder
 import ContourFinder
 import FaceDetector
 import os
+from config import roverconfig
 
 
 class Vision(object):
@@ -54,11 +55,11 @@ class Vision(object):
         cv2.line(frame,(self._center[0]-20,self._center[1]),(self._center[0]+20, self._center[1]),(255,255,255),2)
         cv2.line(frame,(self._center[0],self._center[1]-20),(self._center[0],self._center[1]+20),(255,255,255),2)
         cv2.line(frame, self._laserfinder._point, self._center,(0,255,0),2)
-        cv2.putText(frame, '/tmp/stream/pic.jpg', (5,20),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 2)
+        cv2.putText(frame,"Streamer: " + roverconfig["Streamer"]["StreamerImage"], (5,20),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 2)
 
         #Draw to streamer lib to 'publish'
         #TODO: move to mainloop and make threaded
-        cv2.imwrite('/tmp/stream/pic.jpg',frame)
+        cv2.imwrite(roverconfig["Streamer"]["StreamerImage"],frame)
 
         #TODO: set up a defined framerate
         time.sleep(0.1)

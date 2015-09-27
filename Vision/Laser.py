@@ -1,7 +1,7 @@
 __author__ = 'teddycool'
 
 class Laser(object):
-    def __init__(self, GPIO, controlpin):
+    def __init__(self, GPIO, controlpin=21):
         self._gpio = GPIO
         self._pin = controlpin
         self._gpio.setup(self._pin,self._gpio.OUT, initial=0)
