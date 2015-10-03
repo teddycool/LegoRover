@@ -7,33 +7,55 @@ class MotorControl(object):
     def __init__(self, GPIO):
         self._gpio = GPIO
         #Bool except Speed which is pwm
-        self._controlGPIOs={'LeftOn': 5,'LeftRev': 6, 'RightOn':13,  'RightRev': 19, 'Speed':26}
-        self._controlStates = {'LeftOn': False,'LeftRev': False, 'RightOn':False,  'RightRev': False, 'Speed':0}
+        self._controlGPIOs={'LeftOn': 5,'LeftRev': 6, 'RightOn':13,  'RightRev': 19}
+        self._controlStates = {'LeftOn': False,'LeftRev': False, 'RightOn':False,  'RightRev': False}
         for gpio in self._controlGPIOs:
             self._gpio.setup(self._controlGPIOs[gpio],self._gpio.OUT, initial=0)
 
-    def start(self):
+        self._speedGpio = self._gpio.setup(26,self._gpio.OUT )
+        self._speedGpio =  self._gpio.PWM(26, 200) #Pin 26 for speed control and using 200 hz
+        self._currrentSpeed = 100
+        self._speedGpio.start(self._currrentSpeed)  #Start att full speed...
+
+
+    def forward(self):
         self._controlStates['LeftOn']=True
         self._controlStates['RightOn'] = True
         self._controlStates['LeftRev']=False
         self._controlStates['RightRev'] = False
+        self._setMotorStates()
+
+    def reverse(self):
+        self._controlStates['LeftOn']=False
+        self._controlStates['RightOn'] = False
+        self._controlStates['LeftRev']=True
+        self._controlStates['RightRev'] = True
+        self._setMotorStates()
 
     def stop(self):
         self._controlStates['LeftOn']=False
         self._controlStates['RightOn'] = False
         self._controlStates['LeftRev']=False
         self._controlStates['RightRev'] = False
+        self._setMotorStates()
 
-    def right(self):
+    def rightTurn(self):
         self._controlStates['LeftOn']=True
         self._controlStates['RightRev'] = True
-
-    def left(self):
-        self._controlStates['LeftRev']=True
-        self._controlStates['RightOn'] = True
-
-    def update(self):
         self._setMotorStates()
+
+    def leftTurn(self):
+        self._controlStates['LeftRev']= True
+        self._controlStates['RightOn'] = True
+        self._setMotorStates()
+
+    def setSpeed(self, speed):
+        self._currrentSpeed = speed
+        self._speedGpio.ChangeDutyCycle(speed)
+
+    def getCurrent(self):
+        return self._controlStates, self._currrentSpeed
+
 
 
     def _setMotorStates(self):
@@ -49,15 +71,23 @@ if __name__ == '__main__':
     GPIO.setmode(GPIO.BCM)
     import time
     mc= MotorControl(GPIO)
-    mc.start()
-    mc.update()
-    time.sleep(2)
+    mc.setSpeed(100)
+    print mc.getCurrent()
+    mc.forward()
+    time.sleep(4)
+    mc.setSpeed(20)
+    print mc.getCurrent()
+    time.sleep(4)
     mc.stop()
-    mc.update()
+    print mc.getCurrent()
     time.sleep(2)
-    mc.right()
-    mc.update()
+    mc.rightTurn()
+    print mc.getCurrent()
     time.sleep(2)
+    mc.reverse()
+    print mc.getCurrent()
+    #mc.setSpeed(10)
+    time.sleep(4)
     mc.stop()
-    mc.update()
+    print mc.getCurrent()
     GPIO.cleanup()

@@ -59,7 +59,7 @@ import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 import MotorControl
 mc = MotorControl.MotorControl(GPIO)
-mc.right()
+mc.rightTurn()
 mc.update()
 
 for i in range(0,100):
@@ -80,7 +80,7 @@ for i in range(0,100):
     if y_out > maxy:
         maxy=y_out
 
-    #print x_out, y_out, (x_out * scale), (y_out * scale)
+    print x_out, y_out, (x_out * scale), (y_out * scale)
     time.sleep(0.1)
 
 print "Done..."
