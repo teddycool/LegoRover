@@ -17,7 +17,7 @@ class RangeSensor(object):
         self._gpio .setup(self.ECHO,self._gpio.IN)
         
         self._gpio .output(self.TRIG, False)
-        print "Stabilizing rannge-sensor"
+        print "Stabilizing range-sensor"
         time.sleep(2)
 
        
