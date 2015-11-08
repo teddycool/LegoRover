@@ -14,15 +14,20 @@ class Main(object):
     def run(self):
         self._mainloop.initialize()
         running=True
-        try:
-            while running:
+        while running:
+            try:
                 self._mainloop.update()
                 self._mainloop.draw()
-        finally:
-            self._mainloop.cleanUp()
+            except Exception as e:
+                 print str(e)
+                 running = False
+
+        self._mainloop.cleanUp()
+        print "Game over..."
 
 
 if __name__ == "__main__":
+    print 'Started from: Main.py,  if __name__ == "__main__" '
     gl=Main()
     gl.run()
 

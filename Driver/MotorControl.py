@@ -7,6 +7,7 @@ class MotorControl(object):
     def __init__(self, GPIO):
         self._gpio = GPIO
         #Bool except Speed which is pwm
+        #TODO: fix statet to left/rigth -> fwd, rev, off
         self._controlGPIOs={'LeftOn': 5,'LeftRev': 6, 'RightOn':13,  'RightRev': 19}
         self._controlStates = {'LeftOn': False,'LeftRev': False, 'RightOn':False,  'RightRev': False}
         for gpio in self._controlGPIOs:
@@ -18,14 +19,14 @@ class MotorControl(object):
         self._speedGpio.start(self._currrentSpeed)  #Start att full speed...
 
 
-    def forward(self):
+    def reverse(self):
         self._controlStates['LeftOn']=True
         self._controlStates['RightOn'] = True
         self._controlStates['LeftRev']=False
         self._controlStates['RightRev'] = False
         self._setMotorStates()
 
-    def reverse(self):
+    def forward(self):
         self._controlStates['LeftOn']=False
         self._controlStates['RightOn'] = False
         self._controlStates['LeftRev']=True

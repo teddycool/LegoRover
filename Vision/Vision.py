@@ -4,15 +4,15 @@ __author__ = 'teddycool'
 #Webinfo used for this part of project:
 # http://blog.miguelgrinberg.com/post/stream-video-from-the-raspberry-pi-camera-to-web-browsers-even-on-ios-and-android
 import time
+import sys
+
+import cv2
+
 import picamera
 import picamera.array
-import cv2
-import sys
-import numpy as np
 import LaserFinder
 import ContourFinder
 import FaceDetector
-import os
 from config import roverconfig
 
 
@@ -62,7 +62,7 @@ class Vision(object):
         cv2.imwrite(roverconfig["Streamer"]["StreamerImage"],frame)
 
         #TODO: set up a defined framerate
-        time.sleep(0.1)
+        #time.sleep(0.1)
 
     def __del__(self):
         print "Vision object deleted..."
@@ -74,7 +74,8 @@ class Vision(object):
 if __name__ == '__main__':
     print "Testcode for Vision"
     import RPi.GPIO as GPIO
-    import Laser
+    from Actuators import Laser
+
     GPIO.setmode(GPIO.BCM)
     laser = Laser.Laser(GPIO, 21)
     laser.activate(True)

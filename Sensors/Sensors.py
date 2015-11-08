@@ -14,12 +14,12 @@ class Sensors(object):
         self._gpio = GPIO
         self.sensorvaluesdict={}
         valuesdict = {"Current": 0, "TrendList": []}
-        sensors = ["UsFrontDistance", "Compass", "UsFrontRightDistance"] # ,"BarometricPressure", "Temperature", "Light", "Accelerometer", "Gyro","IrFrontDistance" ]
+        sensors = ["UsFrontLeftDistance", "Compass", "UsFrontRightDistance"] # ,"BarometricPressure", "Temperature", "Light", "Accelerometer", "Gyro","IrFrontDistance" ]
         for sensor in sensors:
             self.sensorvaluesdict[sensor]= copy.deepcopy(valuesdict)
         print "Created values dictionary..."
-        self._rangeFwd=RangeSensor.RangeSensor(self._gpio,23,24)
-        self._rangeRight = RangeSensor.RangeSensor(self._gpio,20,16)
+        self._rangeRight = RangeSensor.RangeSensor(self._gpio,23,24)
+        self._rangeLeft = RangeSensor.RangeSensor(self._gpio,20,21) #Trig, echo
         self._compass= Compass.Compass()
 
     def initialize(self):
@@ -32,18 +32,23 @@ class Sensors(object):
          self._updateValues()
 
     def draw(self, frame):
-        #Print sensorvalues to streamer lib for debug...
-        frame = self._rangeFwd.draw(frame, 50)
-        frame = self._rangeRight.draw(frame, 100)
-        frame = self._compass.draw(frame, 150)
+        frame = self._rangeLeft.draw(frame, "USL", 460,460)
+        frame = self._rangeRight.draw(frame,"USR", 20, 460)
+        frame = self._compass.draw(frame, 5,300)
         return frame
 
     def _updateValues(self):
         #TODO: fix automatic update-call for each sensor -> .update()
         print "Updating sensor values started: " + str(time.time())
-        self.sensorvaluesdict["UsFrontDistance"]["Current"] = self._rangeFwd.update()
+
         self.sensorvaluesdict["UsFrontRightDistance"]["Current"] = self._rangeRight.update()
+        print "Updating sensor values: UsFrontRigthDistance"
+
+        self.sensorvaluesdict["UsFrontLeftDistance"]["Current"] = self._rangeLeft.update()
+        print "Updating sensor values: UsFrontLeftDistance"
+
         self.sensorvaluesdict["Compass"]["Current"] = self._compass.update()
+        print "Updating sensor values: Compass"
 
         for key in self.sensorvaluesdict:
             self.sensorvaluesdict[key]["TrendList"] = self._updateValuesList(self.sensorvaluesdict[key]["Current"], self.sensorvaluesdict[key]["TrendList"] )
