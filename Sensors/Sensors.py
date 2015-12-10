@@ -7,6 +7,7 @@ import config
 import Compass
 #import AccelGyro
 import cv2
+from Logger import Logger
 
 
 class Sensors(object):
@@ -21,17 +22,21 @@ class Sensors(object):
         self._rangeRight = RangeSensor.RangeSensor(self._gpio,23,24)
         self._rangeLeft = RangeSensor.RangeSensor(self._gpio,20,21) #Trig, echo
         self._compass= Compass.Compass()
+        self._log = Logger.Logger("sensors")
 
     def initialize(self):
         #connect each variable to the sensor and value
+        self._log.info("Sensors init")
         self._compass.initialize()
         self._updateValues()
 
 
     def update(self):
-         self._updateValues()
+        self._log.info("Sensors update started")
+        self._updateValues()
 
     def draw(self, frame):
+        self._log.info("Sensors draw started")
         frame = self._rangeLeft.draw(frame, "USL", 460,460)
         frame = self._rangeRight.draw(frame,"USR", 20, 460)
         frame = self._compass.draw(frame, 5,300)
@@ -39,20 +44,23 @@ class Sensors(object):
 
     def _updateValues(self):
         #TODO: fix automatic update-call for each sensor -> .update()
-        print "Updating sensor values started: " + str(time.time())
+        print "Updating sensor values started"
+        startime= time.time()
 
         self.sensorvaluesdict["UsFrontRightDistance"]["Current"] = self._rangeRight.update()
-        print "Updating sensor values: UsFrontRigthDistance"
+      #  print "Updating sensor values: UsFrontRigthDistance"
 
         self.sensorvaluesdict["UsFrontLeftDistance"]["Current"] = self._rangeLeft.update()
-        print "Updating sensor values: UsFrontLeftDistance"
+       # print "Updating sensor values: UsFrontLeftDistance"
 
         self.sensorvaluesdict["Compass"]["Current"] = self._compass.update()
-        print "Updating sensor values: Compass"
+        #print "Updating sensor values: Compass"
 
         for key in self.sensorvaluesdict:
             self.sensorvaluesdict[key]["TrendList"] = self._updateValuesList(self.sensorvaluesdict[key]["Current"], self.sensorvaluesdict[key]["TrendList"] )
-        print "Updating sensor values finished: " + str(time.time())
+        #print "Updating sensor values finished: " + str(time.time())
+        print "Updatetime sensors: " + str(time.time()-startime)
+
 
     def _updateValuesList(self,value, valuelist):
         if value != "N/A":

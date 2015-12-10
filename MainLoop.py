@@ -11,6 +11,7 @@ from Actuators import Laser
 
 #Global GPIO used by all...
 import RPi.GPIO as GPIO
+import os
 
 class MainLoop(object):
     def __init__(self):
@@ -25,6 +26,10 @@ class MainLoop(object):
 
     def initialize(self):
         print "MainLoop init..."
+        print "Starting streamer..."
+        print os.system('sudo mkdir /tmp/stream')
+        print os.system('sudo LD_LIBRARY_PATH=/home/pi/mjpg-streamer/mjpg-streamer /home/pi/mjpg-streamer/mjpg-streamer/mjpg_streamer -i "input_file.so -f /tmp/stream -n pic.jpg" -o "output_http.so -w /home/pi/mjpg-streamer/mjpg-streamer/www" &')
+        print "Starting timers..."
         self.time=time.time()
         self._vision.initialize()
         self._sensors.initialize()
@@ -33,19 +38,16 @@ class MainLoop(object):
         print "Rover started at ", self.time
 
     def update(self):
-        self._frame = self._vision.update()
         self._sensors.update()
-        self._driver.update(self._sensors.sensorvaluesdict)
-        time.sleep(0.01)
+        #self._driver.update(self._sensors.sensorvaluesdict)
+        #time.sleep(0.01)
 
     def draw(self):
-        self._frame  = self. _sensors.draw(self._frame)
-        self._vision.draw(self._frame)
+        frame = self._vision.update()
+        self._sensors.draw(frame)
+        self._vision.draw(frame)
 
-    def cleanUp(self):
-        #cleanup all packages...
-        self._laser.activate(False)
-        self._driver.stop()
+    def __del__(self):
         GPIO.cleanup()
         print "MainLoop cleaned up"
 

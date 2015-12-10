@@ -32,12 +32,12 @@ class Compass(object):
         self._x_out = (self._read_word_2c(3) + roverconfig["Compass"]["OffsetX"]) * roverconfig["Compass"]["Scale"]
         self._y_out = (self._read_word_2c(7) + roverconfig["Compass"]["OffsetY"])* roverconfig["Compass"]["Scale"]
         self._z_out = self._read_word_2c(5) * roverconfig["Compass"]["Scale"]
-        self._compass=(round(self._x_out,1), round(self._y_out,1), round(self._z_out,1))
+        self._compass=(round(self._x_out,2), round(self._y_out,2), round(self._z_out,2))
         self._bearing  = math.atan2(self._y_out, self._x_out)
         if (self._bearing < 0):
-            self._bearing += 2 * math.pi
+            self._bearing = self._bearing + 2 * math.pi
         self._bearing = round(self._bearing,1)
-        print "Bearing: " + str(self._bearing)
+        print "Bearing: " + str(self._toDegrees(self._bearing))
         return self._bearing
 
     def draw(self, frame, textstartx, textstarty):
@@ -63,6 +63,9 @@ class Compass(object):
 
     def _write_byte(self,adr, value):
         self._bus.write_byte_data(self._address, adr, value)
+
+    def _toDegrees(self, radian):
+        return 180*radian/math.pi
 
 
 if __name__ == '__main__':

@@ -33,5 +33,5 @@ class Driver(object):
         return frame
 
     def __del__(self):
-        print "Driver object deleted..."
         self._mc.stop()
+        print "Driver object deleted..."
