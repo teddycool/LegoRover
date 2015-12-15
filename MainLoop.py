@@ -39,16 +39,15 @@ class MainLoop(object):
 
     def update(self):
         self._sensors.update()
-        #self._driver.update(self._sensors.sensorvaluesdict)
+        self._driver.update(self._sensors.sensorvaluesdict)
         #time.sleep(0.01)
 
     def draw(self):
         frame = self._vision.update()
         self._sensors.draw(frame)
+        self._driver.draw(frame)
         self._vision.draw(frame)
 
     def __del__(self):
         GPIO.cleanup()
         print "MainLoop cleaned up"
-
-

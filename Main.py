@@ -13,20 +13,17 @@ class Main(object):
 
 
     def run(self):
-
         self._mainloop.initialize()
         running=True
         frames = 0
         while running:
             try:
-                frames = frames + 1
-                self._log.info("Entering main-loop....")
                 self._mainloop.update()
-                #Not all  has to be drawn
-                if frames%3==0:
-                    self._mainloop.draw()
+                self._mainloop.draw()
+                print "End of Main..."
             except Exception as e:
-                 print str(e)
+                running = False
+                print str(e)
 
 
 if __name__ == "__main__":

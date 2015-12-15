@@ -26,15 +26,16 @@ class ContourFinder(object):
 
 
     def draw(self, frame):
-        if self._cnts >  0:
-            cv2.drawContours(frame, self._cnts, -1, (0, 255, 0), 2)
+        print "Found contours: " + str(len(self._cnts))
+        if len(self._cnts) >  0:
+            frame = cv2.drawContours(frame, self._cnts, -1, (0, 255, 0), 2)
         return frame
 
 if __name__ == '__main__':
     print "Testcode for ContourFinder"
-    frame = cv2.imread("pic1.jpg")
+    frame = cv2.imread("signtest1.jpg")
     cf = ContourFinder()
-    frame = cf.update(frame)
+    cf.update(frame)
     cf.draw(frame)
     cv2.imshow("Contours", frame)
     cv2.waitKey(0)

@@ -16,6 +16,7 @@ import ContourFinder
 import FaceDetector
 from config import roverconfig
 from Logger import Logger
+import SignFinder
 import io
 
 
@@ -33,17 +34,21 @@ class Vision(object):
         self._rawCapture = PiRGBArray(self._cam, size=resolution)
         self._center = (resolution[0]/2, resolution[1]/2)
         #self._laserfinder = LaserFinder.LaserFinder()
+       # self._signFinder = SignFinder.SignFinder()
 
         #TODO: check that streamer is running
 
 
     def initialize(self):
+        print "Vision initialised"
         self._lastframetime = time.time()
         self._imagegenerator = self._cam.capture_continuous(self._rawCapture, format="bgr", use_video_port=True)
+       # self._signFinder.initialize()
 
 
 
     def update(self):
+        print "Vision update"
         self._log.info("Update started")
          #TODO: make threaded in exception catcher
         # https://picamera.readthedocs.org/en/release-1.10/recipes2.html#rapid-capture-and-processing
@@ -54,8 +59,9 @@ class Vision(object):
         self._frame = frame.array
 
         if roverconfig["Vision"]["WriteRawImageToFile"]:
-            cv2.imwrite("/home/pi/LegoRover/Imgs/camseq"+str(self._seqno)+".jpg",frame)
+            cv2.imwrite("/home/pi/LegoRover/Imgs/camseq"+str(self._seqno)+".jpg",self._frame )
         #TODO: deliver found obstacles back to main-loop or sensor-module
+        #self._signFinder.update(self._frame)
         #self._contourFinder.update(self._frame)
         #self._faceDetector.update(frame)
         #self._laserfinder.update(frame)
@@ -67,6 +73,7 @@ class Vision(object):
         framerate = 1/(time.time()-self._lastframetime)
         print "Vision framerate: " + str(framerate)
         self._lastframetime= time.time()
+        #frame = self._signFinder.draw(frame)
         #frame = self._contourFinder.draw(frame)
        # frame = self._faceDetector.draw(frame)
         #frame = self._laserfinder.draw(frame)

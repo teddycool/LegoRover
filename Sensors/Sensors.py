@@ -37,9 +37,9 @@ class Sensors(object):
 
     def draw(self, frame):
         self._log.info("Sensors draw started")
-        frame = self._rangeLeft.draw(frame, "USL", 460,460)
-        frame = self._rangeRight.draw(frame,"USR", 20, 460)
-        frame = self._compass.draw(frame, 5,300)
+        frame = self._rangeLeft.draw(frame, "USL", 20,460)
+        frame = self._rangeRight.draw(frame,"USR", 460, 460)
+        frame = self._compass.draw(frame, 220,460)
         return frame
 
     def _updateValues(self):
