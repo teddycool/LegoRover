@@ -11,6 +11,7 @@ class Buzzer(object):
         self._speedGpio =  self._gpio.PWM(26, 200) #Pin 26 for speed control and using 200 hz
         self._currrentFreq = 0
         self._pin.start(self._currrentFreq)
+        self._soundStates = {}#statename: on-time, off-time, freq
 
 
     def setFrequency(self, freq):

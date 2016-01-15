@@ -16,3 +16,11 @@ Sensorfusion? How to define obstacles etc
 Navigator strategies
 Mechanical design of Lego-bricks for sensors
 Save 'mapdata' from a room?
+
+
+Separate sensors and awareness, the robot needs to be aware of obstacles, direction, speed etc
+Awareness-module is in turn using some sensors to
+
+driving direction
+driving speed
+obstacle-map {front:

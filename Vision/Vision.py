@@ -66,7 +66,8 @@ class Vision(object):
         #self._faceDetector.update(frame)
         #self._laserfinder.update(frame)
         self._log.info("Update finnished")
-        return self._frame
+        #TODO: return detected obstacles etc
+        #return self._frame
 
     def draw(self, frame):
         self._log.info("Draw started")
@@ -89,6 +90,11 @@ class Vision(object):
             cv2.imwrite("/home/pi/LegoRover/Imgs/cvseq"+str(self._seqno)+".jpg",frame)
         self._seqno = self._seqno+1 #Used globally but set here        #TODO: set up a defined (max) framerate from config
         self._log.info("Draw finnished")
+
+
+    def getCurrentFrame(self):
+        return self._frame
+
 
     def __del__(self):
         print "Vision object deleted..."

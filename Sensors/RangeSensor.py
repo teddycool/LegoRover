@@ -11,13 +11,13 @@ class RangeSensor(object):
         self._lastrange = 0
 
         
-        print "Distance Measurement initialized"
+        print "Distance Measurement initialized for pin: " + str(echopin)
         
         self._gpio.setup(self.TRIG,self._gpio.OUT)
         self._gpio.setup(self.ECHO,self._gpio.IN)
         
         self._gpio.output(self.TRIG, False)
-        print "Stabilizing range-sensor"
+        print "Stabilizing range-sensor on pin: " + str(echopin)
         time.sleep(2)
 
        
@@ -51,7 +51,7 @@ class RangeSensor(object):
         distance = pulse_duration * 17000        
         distance = round(distance, 2)
         self._lastrange = distance
-        print "RangeSensor: " + str(distance)
+        print "Distance RangeSensor pin " + str(self.ECHO) + ": " + str(distance)
         return self._lastrange #_min, distance_max
 
     def draw(self, frame, name, textstartx, textstarty):

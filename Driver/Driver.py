@@ -4,6 +4,7 @@ __author__ = 'teddycool'
 #using MotorControl and sensor values
 
 import MotorControl
+from DriveStates import *
 import cv2
 
 class Driver(object):
@@ -13,6 +14,8 @@ class Driver(object):
         self._gpio = GPIO
         self._mc = MotorControl.MotorControl(self._gpio)
         self._drivemodes = ["FwdFast", "FwdSlow", "Stop", "RevFast", "RevSlow", "TRight", "TLeft"]
+        self._driverStates = {}
+        #driverStateList = [" " ]
         return
 
     def initialize(self):
@@ -20,6 +23,7 @@ class Driver(object):
         return
 
     def update(self, sensorvaluesdict):
+        #TODO: Fix driver-states
         print "Driver update"
         if sensorvaluesdict["UsFrontLeftDistance"]["Current"] > 50 and sensorvaluesdict["UsFrontRightDistance"]["Current"] > 50:
             self._mc.forward()

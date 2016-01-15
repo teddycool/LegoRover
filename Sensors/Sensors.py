@@ -15,12 +15,13 @@ class Sensors(object):
         self._gpio = GPIO
         self.sensorvaluesdict={}
         valuesdict = {"Current": 0, "TrendList": []}
-        sensors = ["UsFrontLeftDistance", "Compass", "UsFrontRightDistance"] # ,"BarometricPressure", "Temperature", "Light", "Accelerometer", "Gyro","IrFrontDistance" ]
+        sensors = ["UsFrontLeftDistance", "Compass", "UsFrontRightDistance", "UsRearDistance"] # ,"BarometricPressure", "Temperature", "Light", "Accelerometer", "Gyro","IrFrontDistance" ]
         for sensor in sensors:
             self.sensorvaluesdict[sensor]= copy.deepcopy(valuesdict)
         print "Created values dictionary..."
         self._rangeRight = RangeSensor.RangeSensor(self._gpio,23,24)
         self._rangeLeft = RangeSensor.RangeSensor(self._gpio,20,21) #Trig, echo
+        self._rangeRear = RangeSensor.RangeSensor(self._gpio,16,12) #Trig, echo
         self._compass= Compass.Compass()
         self._log = Logger.Logger("sensors")
 
@@ -37,9 +38,10 @@ class Sensors(object):
 
     def draw(self, frame):
         self._log.info("Sensors draw started")
-        frame = self._rangeLeft.draw(frame, "USL", 20,460)
-        frame = self._rangeRight.draw(frame,"USR", 460, 460)
-        frame = self._compass.draw(frame, 220,460)
+        frame = self._rangeLeft.draw(frame, "USFL", 20,460)
+        frame = self._rangeRight.draw(frame,"USFR", 460, 460)
+        frame = self._rangeRear.draw(frame,"USR", 220, 460)
+        frame = self._compass.draw(frame, 220,400)
         return frame
 
     def _updateValues(self):
@@ -48,17 +50,12 @@ class Sensors(object):
         startime= time.time()
 
         self.sensorvaluesdict["UsFrontRightDistance"]["Current"] = self._rangeRight.update()
-      #  print "Updating sensor values: UsFrontRigthDistance"
-
         self.sensorvaluesdict["UsFrontLeftDistance"]["Current"] = self._rangeLeft.update()
-       # print "Updating sensor values: UsFrontLeftDistance"
-
+        self.sensorvaluesdict["UsRearDistance"]["Current"] = self._rangeRear.update()
         self.sensorvaluesdict["Compass"]["Current"] = self._compass.update()
-        #print "Updating sensor values: Compass"
 
         for key in self.sensorvaluesdict:
             self.sensorvaluesdict[key]["TrendList"] = self._updateValuesList(self.sensorvaluesdict[key]["Current"], self.sensorvaluesdict[key]["TrendList"] )
-        #print "Updating sensor values finished: " + str(time.time())
         print "Updatetime sensors: " + str(time.time()-startime)
 
 

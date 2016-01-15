@@ -22,6 +22,7 @@ class MainLoop(object):
         self._sensors = Sensors.Sensors(self._gpio)
         self._vision = Vision.Vision((640,480))
         self._laser = Laser.Laser(self._gpio,25)
+        #Logger?
 
 
     def initialize(self):
@@ -38,12 +39,16 @@ class MainLoop(object):
         print "Rover started at ", self.time
 
     def update(self):
+        #TODO: add update-freq from config
         self._sensors.update()
-        self._driver.update(self._sensors.sensorvaluesdict)
+        #TODO: add vision update...
+        self._vision.update()
+        #self._driver.update(self._sensors.sensorvaluesdict)
         #time.sleep(0.01)
 
     def draw(self):
-        frame = self._vision.update()
+        #TODO: add update-freq from config
+        frame = self._vision.getCurrentFrame()
         self._sensors.draw(frame)
         self._driver.draw(frame)
         self._vision.draw(frame)
