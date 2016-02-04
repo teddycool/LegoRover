@@ -26,7 +26,7 @@ class Vision(object):
         print "Vision object started..."
         self._seqno = 0
         self._log = Logger.Logger("Vision")
-        #self._contourFinder = ContourFinder.ContourFinder()
+        self._contourFinder = ContourFinder.ContourFinder()
         #self._faceDetector = FaceDetector.FaceDetector()
         self._cam = PiCamera()
         self._cam.resolution = resolution
@@ -62,7 +62,7 @@ class Vision(object):
             cv2.imwrite("/home/pi/LegoRover/Imgs/camseq"+str(self._seqno)+".jpg",self._frame )
         #TODO: deliver found obstacles back to main-loop or sensor-module
         #self._signFinder.update(self._frame)
-        #self._contourFinder.update(self._frame)
+        self._contourFinder.update(self._frame)
         #self._faceDetector.update(frame)
         #self._laserfinder.update(frame)
         self._log.info("Update finnished")
@@ -75,7 +75,7 @@ class Vision(object):
         print "Vision framerate: " + str(framerate)
         self._lastframetime= time.time()
         #frame = self._signFinder.draw(frame)
-        #frame = self._contourFinder.draw(frame)
+        self._contourFinder.draw(frame)
        # frame = self._faceDetector.draw(frame)
         #frame = self._laserfinder.draw(frame)
 

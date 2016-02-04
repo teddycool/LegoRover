@@ -24,11 +24,10 @@ class ContourFinder(object):
                 if radius > 30 and radius < 100:
                     self._cnts.append(cnt)
 
-
     def draw(self, frame):
         print "Found contours: " + str(len(self._cnts))
         if len(self._cnts) >  0:
-            frame = cv2.drawContours(frame, self._cnts, -1, (0, 255, 0), 2)
+            cv2.drawContours(frame, self._cnts, -1, (0, 255, 0), 2)
         return frame
 
 if __name__ == '__main__':

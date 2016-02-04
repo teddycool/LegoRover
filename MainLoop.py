@@ -44,14 +44,14 @@ class MainLoop(object):
         #TODO: add vision update...
         self._vision.update()
         #self._driver.update(self._sensors.sensorvaluesdict)
-        #time.sleep(0.01)
+        time.sleep(0.01)
 
     def draw(self):
         #TODO: add update-freq from config
         frame = self._vision.getCurrentFrame()
-        self._sensors.draw(frame)
-        self._driver.draw(frame)
-        self._vision.draw(frame)
+        frame = self._sensors.draw(frame)
+        frame = self._driver.draw(frame)
+        frame = self._vision.draw(frame)
 
     def __del__(self):
         GPIO.cleanup()
