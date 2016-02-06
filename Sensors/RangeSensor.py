@@ -71,7 +71,7 @@ if __name__ == '__main__':
         while 1:
             print "RS1: " + str(rs1.update())
             time.sleep(1)
-            print "RS2: " + str(rs2.update())
+            #print "RS2: " + str(rs2.update())
             time.sleep(0.5)
     except Exception as e:
         print str(e)
