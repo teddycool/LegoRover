@@ -14,7 +14,7 @@ class MotorControlLegoIr8884 (IMotionControl):
         rightWheelSpeed = frontSpeed + rotationspeed
 
         # convert from WheelSpeed to hex commands
-        os.system("sudo irsend SEND_ONCE LEGO_Combo_PWM 43A2") #Dummy value
+        os.system("sudo irsend SEND_ONCE LEGO_Combo_PWM 43A2") #Dummy value to be changed
 
         return
 
