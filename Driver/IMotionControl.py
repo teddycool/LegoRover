@@ -9,4 +9,5 @@ class IMotionControl(object):
         print "IMotionControl init..."
 
     def setMotion(self, rotationspeed, frontSpeed):
+        #print "IMotionControl  setMotion"
         raise NotImplementedError

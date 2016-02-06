@@ -22,6 +22,7 @@ class MotorControlL298(IMotionControl):
 
     def setMotion(self, rotationspeed, frontSpeed):
         print "MotorControlL298 setMotion..."
+
         return
 
 

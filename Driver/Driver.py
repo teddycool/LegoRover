@@ -40,7 +40,7 @@ class Driver(object):
         # if sensorvaluesdict["UsFrontLeftDistance"]["Current"] < 10 or sensorvaluesdict["UsFrontRightDistance"]["Current"] < 10:
         #     self._mc.reverse()
         #     self._mc.setSpeed(50)
-
+        self._mc.setMotion(100,100)
         return
 
     def draw(self, frame):
