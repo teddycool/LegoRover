@@ -1,10 +1,12 @@
 __author__ = 'teddycool'
 #Handles the actual motors
+from IMotionControl import IMotionControl
 
 
-class MotorControl(object):
+class MotorControlL298(IMotionControl):
 
     def __init__(self, GPIO):
+        super(MotorControlL298, self).__init__()
         self._gpio = GPIO
         #Bool except Speed which is pwm
         #TODO: fix statet to left/rigth -> fwd, rev, off
@@ -17,6 +19,10 @@ class MotorControl(object):
         self._speedGpio =  self._gpio.PWM(26, 200) #Pin 26 for speed control and using 200 hz
         self._currrentSpeed = 100
         self._speedGpio.start(self._currrentSpeed)  #Start att full speed...
+
+    def setMotion(self, rotationspeed, frontSpeed):
+        print "MotorControlL298 setMotion..."
+        return
 
 
     def reverse(self):
@@ -71,7 +77,7 @@ if __name__ == '__main__':
     import RPi.GPIO as GPIO
     GPIO.setmode(GPIO.BCM)
     import time
-    mc= MotorControl(GPIO)
+    mc= MotorControlL298(GPIO)
     speed =100
     mc.setSpeed(speed)
     mc.forward()
