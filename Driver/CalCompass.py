@@ -57,8 +57,8 @@ maxy = 0
 #Drive in a circle and read the compass
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
-import MotorControl
-mc = MotorControl.MotorControl(GPIO)
+import MotorControlL298
+mc = MotorControlL298.MotorControlL298(GPIO)
 mc.rightTurn()
 mc.update()
 

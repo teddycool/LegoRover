@@ -1,9 +1,9 @@
 __author__ = 'teddycool'
 
 #logic for driving...
-#using MotorControl and sensor values
+#using MotorControlL298 and sensor values
 
-import MotorControl
+import MotorControlL298
 from DriveStates import *
 import cv2
 
@@ -12,7 +12,7 @@ class Driver(object):
 
     def __init__(self, GPIO):
         self._gpio = GPIO
-        self._mc = MotorControl.MotorControl(self._gpio)
+        self._mc = MotorControlL298.MotorControlL298(self._gpio)
         self._drivemodes = ["FwdFast", "FwdSlow", "Stop", "RevFast", "RevSlow", "TRight", "TLeft"]
         self._driverStates = {}
         #driverStateList = [" " ]
@@ -25,21 +25,21 @@ class Driver(object):
     def update(self, sensorvaluesdict):
         #TODO: Fix driver-states
         print "Driver update"
-        if sensorvaluesdict["UsFrontLeftDistance"]["Current"] > 50 and sensorvaluesdict["UsFrontRightDistance"]["Current"] > 50:
-            self._mc.forward()
-            self._mc.setSpeed(100)
-
-        if sensorvaluesdict["UsFrontLeftDistance"]["Current"] < 30 and sensorvaluesdict["UsFrontRightDistance"]["Current"] > 50:
-            self._mc.rightTurn()
-            self._mc.setSpeed(50)
-
-        if sensorvaluesdict["UsFrontLeftDistance"]["Current"] > 50 and sensorvaluesdict["UsFrontRightDistance"]["Current"] < 30:
-            self._mc.leftTurn()
-            self._mc.setSpeed(50)
-
-        if sensorvaluesdict["UsFrontLeftDistance"]["Current"] < 10 or sensorvaluesdict["UsFrontRightDistance"]["Current"] < 10:
-            self._mc.reverse()
-            self._mc.setSpeed(50)
+        # if sensorvaluesdict["UsFrontLeftDistance"]["Current"] > 50 and sensorvaluesdict["UsFrontRightDistance"]["Current"] > 50:
+        #     self._mc.forward()
+        #     self._mc.setSpeed(100)
+        #
+        # if sensorvaluesdict["UsFrontLeftDistance"]["Current"] < 30 and sensorvaluesdict["UsFrontRightDistance"]["Current"] > 50:
+        #     self._mc.rightTurn()
+        #     self._mc.setSpeed(50)
+        #
+        # if sensorvaluesdict["UsFrontLeftDistance"]["Current"] > 50 and sensorvaluesdict["UsFrontRightDistance"]["Current"] < 30:
+        #     self._mc.leftTurn()
+        #     self._mc.setSpeed(50)
+        #
+        # if sensorvaluesdict["UsFrontLeftDistance"]["Current"] < 10 or sensorvaluesdict["UsFrontRightDistance"]["Current"] < 10:
+        #     self._mc.reverse()
+        #     self._mc.setSpeed(50)
 
         return
 
