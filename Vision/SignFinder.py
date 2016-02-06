@@ -13,48 +13,36 @@ class SignFinder(object):
         self._circles = None
         return
 
-
     def initialize(self):
-        self._redLower = np.array([0, 20, 75], dtype = "uint8")
-        self._redUpper = np.array([50, 60, 130], dtype = "uint8")
-        return
+        print "SignFinder initialize"
+        self._hsvOrangeMin = np.array([1, 100, 100])
+        self._hsvOrangeMax = np.array([2, 255, 255])
+        self._hsvRedMin = np.array([160, 100, 100])
+        self._hsvRedMax = np.array([179, 255, 255])
+        self._hsvWhiteMin = np.array([0, 0, 100])
+        self._hsvWhiteMax = np.array([255, 0, 255])
+        self._hsvBlueMin = np.array([118, 100, 12])
+        self._hsvBlueMax = np.array([122, 255, 255])
 
     def update(self, frame):
-        red = cv2.inRange(frame.copy(), self._redLower, self._redUpper)
-        zeros = np.zeros(frame.shape[:2], dtype = "uint8")
-        self._circles = cv2.HoughCircles(red,cv2.cv.CV_HOUGH_GRADIENT,1,50, param1=15,param2=15,minRadius=15,maxRadius=50)
-
-    def draw(self, frame):
-        if self._circles != None:
-            print "Circles: " + str(len( self._circles))
-            self._circles = np.uint16(np.around( self._circles))
-            for i in  self._circles[0,:]:
-                # draw the outer circle
-                cv2.circle(frame,(i[0],i[1]),i[2],(0,255,0),2)
-                # draw the center of the circle
-                cv2.circle(frame,(i[0],i[1]),2,(0,0,255),3)
+        frameHSV = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        orange = cv2.inRange(frameHSV, self._hsvOrangeMin, self._hsvOrangeMax)
+        red = cv2.inRange(frameHSV, self._hsvRedMin, self._hsvRedMax)
+        blue = cv2.inRange(frameHSV, self._hsvBlueMin, self._hsvBlueMax)
+        total_red = red#cv2.add(orange, red)
+        self._stop = cv2.HoughCircles(total_red, cv2.cv.CV_HOUGH_GRADIENT, 3, 75, param1 = 100, param2 = 100, minRadius = 10, maxRadius = 75)
         return frame
 
-
-    def borders(self, img):
-        redLower = np.array([0, 20, 75], dtype = "uint8")
-        redUpper = np.array([50, 60, 130], dtype = "uint8")
-        red = cv2.inRange(img.copy(), redLower, redUpper)
-        zeros = np.zeros(img.shape[:2], dtype = "uint8")
-        #For debug
-        cv2.imshow("Red", red)
-        circles = cv2.HoughCircles(red,cv2.cv.CV_HOUGH_GRADIENT,1,50, param1=15,param2=15,minRadius=15,maxRadius=50)
-
-        if circles != None:
-            print "Circles: " + str(len(circles))
-            circles = np.uint16(np.around(circles))
-            for i in circles[0,:]:
+    def draw(self, frame):
+        if self._stop != None:
+            self._stop = np.uint16(np.around( self._stop))
+            print "Stops: " + str(len( self._stop))
+            for i in  self._stop[0,:]:
                 # draw the outer circle
-                cv2.circle(img,(i[0],i[1]),i[2],(0,255,0),2)
+                cv2.circle(frame, (i[0],i[1]), i[2], (0, 255, 0), 2)
                 # draw the center of the circle
-                cv2.circle(img,(i[0],i[1]),2,(0,0,255),3)
-        return img
-
+                cv2.circle(frame, (i[0],i[1]), 2, (0, 0, 255), 3)
+        return frame
 
 if __name__ == '__main__':
     print "Testcode for SignFinder"
