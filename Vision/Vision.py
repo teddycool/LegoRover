@@ -3,7 +3,6 @@ __author__ = 'teddycool'
 #
 #Webinfo used for this part of project:
 # http://blog.miguelgrinberg.com/post/stream-video-from-the-raspberry-pi-camera-to-web-browsers-even-on-ios-and-android
-
 import time
 import sys
 import os
