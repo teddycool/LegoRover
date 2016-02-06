@@ -49,7 +49,7 @@ class RangeSensor(object):
         return self.distance
 
     def draw(self, frame, name, textstartx, textstarty):
-        cv2.putText(frame, name + ": " + str(self._lastrange) + " cm", (textstartx,textstarty),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 2)
+        cv2.putText(frame, name + ": " + str(self.distance) + " cm", (textstartx,textstarty),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 2)
         return frame
 
 if __name__ == '__main__':
