@@ -1,5 +1,5 @@
 __author__ = 'teddycool'
-#Handles the actual motors thats good wow wow
+#Handles the actual motors  wow wow
 from IMotionControl import IMotionControl
 
 
