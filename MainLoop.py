@@ -6,7 +6,6 @@ import time
 from Sensors import Sensors
 from Driver import Driver
 from Vision import Vision
-from Actuators import Laser
 
 
 #Global GPIO used by all...
@@ -40,7 +39,7 @@ class MainLoop(object):
         self._sensors.update()
         #TODO: add vision update...
         self._vision.update()
-        self._driver.update(self._sensors.sensorvaluesdict)
+       # self._driver.update(self._sensors.sensorvaluesdict)
         time.sleep(0.01)
 
     def draw(self):

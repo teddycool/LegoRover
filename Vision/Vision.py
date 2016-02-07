@@ -106,11 +106,8 @@ class Vision(object):
 if __name__ == '__main__':
     print "Testcode for Vision"
     import RPi.GPIO as GPIO
-    from Actuators import Laser
 
     GPIO.setmode(GPIO.BCM)
-    laser = Laser.Laser(GPIO, 21)
-    laser.activate(True)
 
     vision= Vision( (640,480))
     vision.initialize()
@@ -122,7 +119,6 @@ if __name__ == '__main__':
             vision.draw(frame)
             time.sleep(0.2)
     except:
-        laser.activate(False)
         GPIO.cleanup()
         e = sys.exc_info()[0]
         print e

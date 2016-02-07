@@ -6,6 +6,7 @@ class RangeSensor(object):
     
     def __init__(self, gpio, triggerpin, echopin):
         self._gpio = gpio
+        self._gpio.setmode(GPIO.BCM)
         self.TRIG = triggerpin
         self.ECHO = echopin
         self._lastrange = 0
