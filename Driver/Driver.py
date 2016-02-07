@@ -25,21 +25,22 @@ class Driver(object):
     def update(self, sensorvaluesdict):
         #TODO: Fix driver-states
         print "Driver update"
-        # if sensorvaluesdict["UsFrontLeftDistance"]["Current"] > 50 and sensorvaluesdict["UsFrontRightDistance"]["Current"] > 50:
-        #     self._mc.forward()
-        #     self._mc.setSpeed(100)
-        #
-        # if sensorvaluesdict["UsFrontLeftDistance"]["Current"] < 30 and sensorvaluesdict["UsFrontRightDistance"]["Current"] > 50:
-        #     self._mc.rightTurn()
-        #     self._mc.setSpeed(50)
-        #
-        # if sensorvaluesdict["UsFrontLeftDistance"]["Current"] > 50 and sensorvaluesdict["UsFrontRightDistance"]["Current"] < 30:
-        #     self._mc.leftTurn()
-        #     self._mc.setSpeed(50)
-        #
-        # if sensorvaluesdict["UsFrontLeftDistance"]["Current"] < 10 or sensorvaluesdict["UsFrontRightDistance"]["Current"] < 10:
-        #     self._mc.reverse()
-        #     self._mc.setSpeed(50)
+        if sensorvaluesdict["UsFrontLeftDistance"]["Current"] > 50 and sensorvaluesdict["UsFrontRightDistance"]["Current"] > 50:
+            self._mc.forward()
+            self._mc.setSpeed(100)
+
+        if sensorvaluesdict["UsFrontLeftDistance"]["Current"] < 30 and sensorvaluesdict["UsFrontRightDistance"]["Current"] > 50:
+            self._mc.rightTurn()
+            self._mc.setSpeed(50)
+
+        if sensorvaluesdict["UsFrontLeftDistance"]["Current"] > 50 and sensorvaluesdict["UsFrontRightDistance"]["Current"] < 30:
+            self._mc.leftTurn()
+            self._mc.setSpeed(50)
+
+        if sensorvaluesdict["UsFrontLeftDistance"]["Current"] < 10 or sensorvaluesdict["UsFrontRightDistance"]["Current"] < 10:
+            self._mc.reverse()
+            self._mc.setSpeed(50)
+
         self._mc.setMotion(100,100)
         return
 

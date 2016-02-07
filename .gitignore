@@ -55,5 +55,11 @@ docs/_build/
 
 # PyBuilder
 target/
-*.xml
-*.iml
+
+#Ide environment
+.idea/
+Imgs/
+.idea/misc.xml
+.idea/misc.xml
+cam+cv-stream.zip
+.idea/LegoRover.iml

@@ -8,7 +8,8 @@ class DriveState(object):
 
 
     def initialize(self):
-        return
+        #print "IMotionControl  setMotion"
+        raise NotImplementedError
 
     def update(self, frame):
         return frame
