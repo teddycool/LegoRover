@@ -55,5 +55,9 @@ docs/_build/
 
 # PyBuilder
 target/
+
+#Ide environment
 *.xml
 *.iml
+.idea/
+Imgs/
