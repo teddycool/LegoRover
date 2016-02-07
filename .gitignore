@@ -57,7 +57,5 @@ docs/_build/
 target/
 
 #Ide environment
-*.xml
-*.iml
 .idea/
 Imgs/
