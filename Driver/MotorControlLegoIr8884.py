@@ -26,6 +26,7 @@ class MotorControlLegoIr8884 (IMotionControl):
         c_MAX_FRONT_SPEED = 10
         c_MAX_WHEEL_SPEED = c_MAX_FRONT_SPEED
         c_MAX_WHEEL_HEX = 7
+
         leftWheelHEX = 0
         rightWheelHEX = 0
 
