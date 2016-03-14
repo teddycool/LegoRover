@@ -1,6 +1,6 @@
 __author__ = 'teddycool'
 #Manage all sensors
-import RangeSensor
+import RangeSensor_new_interrupt_based as RangeSensor
 import copy
 import time
 import config

@@ -12,6 +12,7 @@ class Driver(object):
 
     def __init__(self, GPIO):
         self._gpio = GPIO
+        #self._gpio.setmode(self._gpio.BCM)
         self._mc = MotorControlL298.MotorControlL298(self._gpio)
         self._drivemodes = ["FwdFast", "FwdSlow", "Stop", "RevFast", "RevSlow", "TRight", "TLeft"]
         self._driverStates = {}
@@ -19,7 +20,7 @@ class Driver(object):
         return
 
     def initialize(self):
-        self._mc.stop()
+        self._mc.setMotion(0,0)
         return
 
     def update(self, sensorvaluesdict):
@@ -41,14 +42,15 @@ class Driver(object):
         #     self._mc.reverse()
         #     self._mc.setSpeed(50)
 
+        self._mc.setMotion(0,0)
         return
 
     def draw(self, frame):
-        cv2.putText(frame,"Speed: " + str(self._mc._currrentSpeed) ,(5,40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 2)
+        #cv2.putText(frame,"Speed: " + str(self._mc._currentSpeed) ,(5,40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 2)
         cv2.putText(frame,"Motor: " + str(self._mc._controlStates),(5,60), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 2)
 
         return frame
 
     def __del__(self):
-        self._mc.stop()
+        self._mc.setMotion(0,0)
         print "Driver object deleted..."
