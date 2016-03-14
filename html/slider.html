@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>slider demo</title>
+  <link rel="stylesheet" href="jq-ui/jquery-ui.min.css">
+  <script src="jq-ui/external/jquery/jquery.js"></script>
+  <script src="jq-ui/jquery-ui.min.js"></script>
+  <style>#slider { margin: 10px; }	</style>
+</head>
+<body>
+
+<div id="slider"></div>
+<p id="res"></p>
+
+<script>
+$( "#slider" ).slider();
+$( "#slider" ).slider({
+  change: function( event, ui ) {
+  var v = $( "#slider" ).slider( "value" );
+  var str = "jkJ" + v;
+  $("#res").text(str);
+
+
+  }
+});
+</script>
+
+</body>
+</html>
