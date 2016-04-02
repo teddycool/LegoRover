@@ -1,0 +1,1 @@
+WinSCP\winscp.exe /console /script=deploy_winscp.txt

@@ -6,8 +6,8 @@ $( "#turnSlider" ).slider({
   var t = $( "#turnSlider" ).slider( "value" );
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
-            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                document.getElementById("phpinfo").innerHTML = xmlhttp.responseText;
+            if (xhttp.readyState == 4 && xhttp.status == 200) {
+                document.getElementById("phpinfo").innerHTML = xhttp.responseText;
             }
         };
   var get_str = "send_command.php?command=set_turn " + t;
@@ -21,8 +21,8 @@ $( "#speedSlider" ).slider({
   var s = $( "#speedSlider" ).slider( "value" );
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
-            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                document.getElementById("phpinfo").innerHTML = xmlhttp.responseText;
+            if (xhttp.readyState == 4 && xhttp.status == 200) {
+                document.getElementById("phpinfo").innerHTML = xhttp.responseText;
             }
         };
 
