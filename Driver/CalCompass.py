@@ -1,9 +1,10 @@
 __author__ = 'psk'
 #http://blog.bitify.co.uk/2013/11/connecting-and-calibrating-hmc5883l.html
 #!/usr/bin/python
-import smbus
-import time
 import math
+import time
+
+import smbus
 
 bus = smbus.SMBus(1)
 address = 0x1e
@@ -57,7 +58,8 @@ maxy = 0
 #Drive in a circle and read the compass
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
-import MotorControlL298
+from MotorControl import MotorControlL298
+
 mc = MotorControlL298.MotorControlL298(GPIO)
 mc.rightTurn()
 mc.update()

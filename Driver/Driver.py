@@ -3,9 +3,10 @@ __author__ = 'teddycool'
 #logic for driving...
 #using MotorControlL298 and sensor values
 
-import MotorControlL298
-from DriveStates import *
 import cv2
+
+from MotorControl import MotorControlL298
+
 
 class Driver(object):
 
