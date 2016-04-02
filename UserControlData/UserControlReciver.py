@@ -45,9 +45,9 @@ if __name__ == '__main__':
     ser = SerailCommander()
     while 1:
         r.mutex.acquire()
-        print "Data is : " + r.user_data.data
-        print "Speed is : " + str(r.user_data.speed)
-        print "Turn is : " + str(r.user_data.turn)
+        #print "Data is : " + r.user_data.data
+        #print "Speed is : " + str(r.user_data.speed)
+        #print "Turn is : " + str(r.user_data.turn)
         ser.sendSerialCommand(r.user_data.speed, r.user_data.turn)
         r.mutex.release()
         time.sleep(0.1)

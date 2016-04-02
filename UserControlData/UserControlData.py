@@ -32,7 +32,8 @@ class UserControlData:
         print "Read input str: " + input_str
         if len(command) < 2:
             print 'err' #TODO handle
-        commands[command[0]](self, command[1])
+        else:
+            commands[command[0]](self, command[1])
 
 
 if __name__ == '__main__':
