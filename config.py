@@ -7,6 +7,5 @@ roverconfig = { "Streamer": {"StreamerImage": "/tmp/stream/pic.jpg", "StreamerLi
                 "Vision": {"WriteRawImageToFile": False, "WriteCvImageToFile": False},
                 "Logger": {"LogFile": "/home/pi/LegoRover/Logger/log.txt"},
                 "Driver": {"TooClose": 10, "TooFarAway": 50, "TooTurn": 30},
-
                 }
 

@@ -14,8 +14,14 @@ from picamera.array import PiRGBArray
 import LaserFinder
 import ContourFinder
 import FaceDetector
-from config import roverconfig
-from Logger import Logger
+import os
+try:
+    from config import roverconfig
+except:
+    roverconfig = { "Streamer": {"StreamerImage": "/tmp/stream/pic.jpg", "StreamerLib": "/tmp/stream"},
+                "Vision": {"WriteRawImageToFile": False, "WriteCvImageToFile": False},
+                }
+#from Logger import Logger
 import SignFinder
 import io
 
@@ -25,7 +31,7 @@ class Vision(object):
     def __init__(self, resolution):
         print "Vision object started..."
         self._seqno = 0
-        self._log = Logger.Logger("Vision")
+        #self._log = Logger.Logger("Vision")
         self._contourFinder = ContourFinder.ContourFinder()
         #self._faceDetector = FaceDetector.FaceDetector()
         self._cam = PiCamera()
@@ -35,6 +41,10 @@ class Vision(object):
         self._center = (resolution[0]/2, resolution[1]/2)
         #self._laserfinder = LaserFinder.LaserFinder()
        # self._signFinder = SignFinder.SignFinder()
+        print "Starting streamer..."
+        print os.system('sudo mkdir /tmp/stream')
+        print os.system('sudo LD_LIBRARY_PATH=/home/pi/mjpg-streamer/mjpg-streamer /home/pi/mjpg-streamer/mjpg-streamer/mjpg_streamer -i "input_file.so -f /tmp/stream -n pic.jpg" -o "output_http.so -w /home/pi/mjpg-streamer/mjpg-streamer/www" &')
+
 
         #TODO: check that streamer is running
 
@@ -49,7 +59,7 @@ class Vision(object):
 
     def update(self):
         print "Vision update"
-        self._log.info("Update started")
+        #self._log.info("Update started")
          #TODO: make threaded in exception catcher
         # https://picamera.readthedocs.org/en/release-1.10/recipes2.html#rapid-capture-and-processing
 
@@ -65,12 +75,12 @@ class Vision(object):
         self._contourFinder.update(self._frame)
         #self._faceDetector.update(frame)
         #self._laserfinder.update(frame)
-        self._log.info("Update finnished")
+        #self._log.info("Update finnished")
         #TODO: return detected obstacles etc
         #return self._frame
 
     def draw(self, frame):
-        self._log.info("Draw started")
+        #self._log.info("Draw started")
         framerate = 1/(time.time()-self._lastframetime)
         print "Vision framerate: " + str(framerate)
         self._lastframetime= time.time()
@@ -89,7 +99,7 @@ class Vision(object):
         if roverconfig["Vision"]["WriteCvImageToFile"]:
             cv2.imwrite("/home/pi/LegoRover/Imgs/cvseq"+str(self._seqno)+".jpg",frame)
         self._seqno = self._seqno+1 #Used globally but set here        #TODO: set up a defined (max) framerate from config
-        self._log.info("Draw finnished")
+        #self._log.info("Draw finnished")
 
 
     def getCurrentFrame(self):

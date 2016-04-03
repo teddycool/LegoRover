@@ -24,9 +24,6 @@ class MainLoop(object):
 
     def initialize(self):
         print "MainLoop init..."
-        print "Starting streamer..."
-        print os.system('sudo mkdir /tmp/stream')
-        print os.system('sudo LD_LIBRARY_PATH=/home/pi/mjpg-streamer/mjpg-streamer /home/pi/mjpg-streamer/mjpg-streamer/mjpg_streamer -i "input_file.so -f /tmp/stream -n pic.jpg" -o "output_http.so -w /home/pi/mjpg-streamer/mjpg-streamer/www" &')
         print "Starting timers..."
         self.time=time.time()
         self._vision.initialize()

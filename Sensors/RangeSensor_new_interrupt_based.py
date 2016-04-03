@@ -1,7 +1,7 @@
 
 import time
 from threading import Thread
-#import cv2
+import cv2
 #import RPi.GPIO as GPIO
 
 
