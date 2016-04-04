@@ -8,3 +8,10 @@ Each object, like the sensors may have more parts that are looped within this ob
 Vision is using classes for obstable-, face- and line-recognition wich data is tranfered to the driver-class.
 
 
+LCM:
+Build:      https://lcm-proj.github.io/build_instructions.html
+DataType:   https://lcm-proj.github.io/tut_lcmgen.html
+Generate:   lcm-gen -p usdistance.lcm
+
+
+

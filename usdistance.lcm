@@ -1,0 +1,7 @@
+package LCM;
+struct usdistance
+{
+    double   distance;
+    string   name;
+    boolean  enabled;
+}
