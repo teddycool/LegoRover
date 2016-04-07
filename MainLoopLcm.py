@@ -34,9 +34,11 @@ class MainLoop(object):
         print "Starting timers..."
         self.time=time.time()
 
-    def update(self):
-        self._us1.update()
-        time.sleep(0.01)
+    def update(self, us): #In new thread
+        while 1:
+            print "Update in the new thread..."
+            us.update()
+            time.sleep(0.01)
 
     def draw(self):
         self._lc.handle()

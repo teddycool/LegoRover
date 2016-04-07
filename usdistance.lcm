@@ -1,4 +1,5 @@
 package LCM;
+
 struct usdistance
 {
     double   distance;

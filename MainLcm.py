@@ -3,6 +3,7 @@ __author__ = 'teddycool'
 import os, sys
 from MainLoopLcm import MainLoop
 from Logger import Logger
+import thread
 
 class Main(object):
 
@@ -15,11 +16,15 @@ class Main(object):
         self._mainloop.initialize()
         running=True
         frames = 0
+
+        print "Starting new thread"
+        thread.start_new_thread(self._mainloop.update, (self._mainloop._us1,))
         while running:
             try:
-                self._mainloop.update()
+
+                #self._mainloop.update()
                 self._mainloop.draw()
-                print "End of Main..."
+                #print "End of Main..."
             except Exception as e:
                 running = False
                 print str(e)
