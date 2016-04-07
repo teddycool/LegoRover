@@ -17,8 +17,8 @@ class Main(object):
         running=True
         frames = 0
 
-        print "Starting new thread"
-        thread.start_new_thread(self._mainloop.update, (self._mainloop._us1,))
+        print "Starting new thread for each sensor/sensorarray"
+        thread.start_new_thread(self._mainloop.update, (self._mainloop._us,))
         while running:
             try:
 

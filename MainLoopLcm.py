@@ -3,7 +3,7 @@ __author__ = 'teddycool'
 
 import time
 
-from Sensors import RangeSensorLcm
+from Sensors import RangeSensorsLcm
 import lcm
 from LCM import usdistance
 
@@ -17,7 +17,7 @@ class MainLoop(object):
         self._state ={}
         GPIO.setmode(GPIO.BCM)
         self._gpio = GPIO
-        self._us1=RangeSensorLcm.RangeSensorLcm(self._gpio ,23,24) #Trig, echo
+        self._us=RangeSensorsLcm.RangeSensorsLcm(self._gpio, [["RS1", 23,24],["RS2", 20,21]])
         self._lc = lcm.LCM()
         self._subscription = self._lc.subscribe("ULTRASONIC", self.my_handler)
 

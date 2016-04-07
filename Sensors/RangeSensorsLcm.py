@@ -6,10 +6,7 @@
 import time
 import cv2
 import lcm
-try:
-    from LCM import usdistance
-except:
-    import usdistance #REMOVE!!!
+from LCM import usdistance
 
 class RangeSensor(object):
 
@@ -99,7 +96,7 @@ if __name__ == '__main__':
     import RPi.GPIO as GPIO
     import thread
     GPIO.setmode(GPIO.BCM)
-
+    #Fix to use import from correct package...
     def my_handler(channel, data):
         msg = usdistance.usdistance.decode(data)
         print("Received message on channel \"%s\"" % channel)
