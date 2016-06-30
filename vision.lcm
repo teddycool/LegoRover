@@ -1,0 +1,9 @@
+package LCM;
+
+struct vision
+{
+    int pixel[3]
+    pixel    contours[800][640];
+    string   name;
+    boolean  enabled;
+}

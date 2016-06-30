@@ -3,10 +3,12 @@ __author__ = 'teddycool'
 
 import time
 
-from Sensors import RangeSensorsLcm
+from Sensors import Sensors
+from Vision import Vision
 import lcm
 from LCM import usdistance
 
+import thread
 
 #Global GPIO used by all...
 import RPi.GPIO as GPIO
@@ -15,35 +17,37 @@ import os
 class MainLoop(object):
     def __init__(self):
         self._state ={}
-        GPIO.setmode(GPIO.BCM)
         self._gpio = GPIO
-        self._us=RangeSensorsLcm.RangeSensorsLcm(self._gpio, [["RS1", 23,24],["RS2", 20,21]])
-        self._lc = lcm.LCM()
-        self._subscription = self._lc.subscribe("ULTRASONIC", self.my_handler)
+        self._gpio.setmode(self._gpio.BCM)
 
-    def my_handler(self, channel, data):
-        msg = usdistance.decode(data)
-        print("Received message on channel \"%s\"" % channel)
-        print("   name        = '%s'" % msg.name)
-        print("   distance    = %s" % str(msg.distance))
-        print("   enabled     = %s" % str(msg.enabled))
-
+        self._sensors = Sensors.Sensors(self._gpio)
+        self._vision = Vision.Vision((640,480))
+       #self._compass =
 
     def initialize(self):
         print "MainLoop LCM init..."
         print "Starting timers..."
         self.time=time.time()
+        self._vision.initialize()
+        self._sensors.initialize()
+        #print "Kickstart threads for each sensor/sensorarray"
+        #print "Starting new thread for electronic compass"
 
-    def update(self, us): #In new thread
-        while 1:
-            print "Update in the new thread..."
-            us.update()
-            time.sleep(0.01)
 
-    def draw(self):
-        self._lc.handle()
-        pass
+    def draw(self,frame):
+        #Handle values...
+        frame = self._sensors.draw(frame)
+        frame = self._sensors.draw(frame)
+        frame = self._vision.draw(frame)
+        return
+
+    def update(self):
+        self._sensors.update()
+        frame = self._vision.update()
+        return frame
 
     def __del__(self):
-        GPIO.cleanup()
+        self._gpio.cleanup()
         print "MainLoop cleaned up"
+
+

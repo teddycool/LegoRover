@@ -1,62 +1,52 @@
 __author__ = 'teddycool'
 #Manage all sensors
-import RangeSensor_new_interrupt_based as RangeSensor
+import RangeSensorsLcm
 import copy
 import time
-import config
-import Compass
-#import AccelGyro
+import lcm
+from LCM import usdistance
+import thread
 import cv2
+
 from Logger import Logger
 
 
 class Sensors(object):
-    def __init__(self, GPIO):
-        self._gpio = GPIO
+    def __init__(self, gpio):
+        self._gpio = gpio
         self.sensorvaluesdict={}
         valuesdict = {"Current": 0, "TrendList": []}
-        sensors = ["UsFrontLeftDistance", "Compass", "UsFrontRightDistance", "UsRearDistance"] # ,"BarometricPressure", "Temperature", "Light", "Accelerometer", "Gyro","IrFrontDistance" ]
-        for sensor in sensors:
-            self.sensorvaluesdict[sensor]= copy.deepcopy(valuesdict)
+        channels = ["RS1", "RS2", ] # ,"BarometricPressure", "Temperature", "Light", "Accelerometer", "Gyro","IrFrontDistance" ]
+        for channel in channels:
+            self.sensorvaluesdict[channel]= copy.deepcopy(valuesdict)
         print "Created values dictionary..."
-        self._rangeRight = RangeSensor.RangeSensor(self._gpio,23,24)
-        self._rangeLeft = RangeSensor.RangeSensor(self._gpio,20,21) #Trig, echo
-        self._rangeRear = RangeSensor.RangeSensor(self._gpio,16,12) #Trig, echo
-        self._compass= Compass.Compass()
+        self._lc = lcm.LCM()
+        #Add subscriptions for all messages
+        self._s1 = self._lc.subscribe("RS1", self._usd_handler)
+        self._s2 = self._lc.subscribe("RS2", self._usd_handler)
         self._log = Logger.Logger("sensors")
 
+    def __del__(self):
+        self._lc.unsubscribe(self._s1)
+        self._lc.unsubscribe(self._s2)
+
     def initialize(self):
-        #connect each variable to the sensor and value
-        self._log.info("Sensors init")
-        self._compass.initialize()
-        self._updateValues()
+         self._log.info("Sensors init")
 
 
     def update(self):
         self._log.info("Sensors update started")
-        self._updateValues()
+        self._lc.handle()
+
 
     def draw(self, frame):
         self._log.info("Sensors draw started")
-        frame = self._rangeLeft.draw(frame, "USFL", 20,460)
-        frame = self._rangeRight.draw(frame,"USFR", 460, 460)
-        frame = self._rangeRear.draw(frame,"USR", 220, 460)
-        frame = self._compass.draw(frame, 220,400)
+        index = 10
+        for channel in self.sensorvaluesdict:
+            cv2.putText(frame, channel + ": " + str(self.sensorvaluesdict[channel]["Current"]), (index,50),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 2)
+            index = index + 100
         return frame
 
-    def _updateValues(self):
-        #TODO: fix automatic update-call for each sensor -> .update()
-        print "Updating sensor values started"
-        startime= time.time()
-
-        self.sensorvaluesdict["UsFrontRightDistance"]["Current"] = self._rangeRight.update()
-        self.sensorvaluesdict["UsFrontLeftDistance"]["Current"] = self._rangeLeft.update()
-        self.sensorvaluesdict["UsRearDistance"]["Current"] = self._rangeRear.update()
-        self.sensorvaluesdict["Compass"]["Current"] = self._compass.update()
-
-        for key in self.sensorvaluesdict:
-            self.sensorvaluesdict[key]["TrendList"] = self._updateValuesList(self.sensorvaluesdict[key]["Current"], self.sensorvaluesdict[key]["TrendList"] )
-        print "Updatetime sensors: " + str(time.time()-startime)
 
 
     def _updateValuesList(self,value, valuelist):
@@ -65,4 +55,14 @@ class Sensors(object):
             if (len(valuelist)> 10):
                 poped = valuelist.pop(0)
         return valuelist
+
+
+#private callback functions
+    def _usd_handler(self, channel, data):
+        print("Received message on channel \"%s\"" % channel)
+        msg = usdistance.usdistance.decode(data)
+        self.sensorvaluesdict[channel]["Current"] = msg.distance
+        self._updateValuesList(msg.distance, self.sensorvaluesdict[channel]["TrendList"])
+        print str(self.sensorvaluesdict[channel])
+
 

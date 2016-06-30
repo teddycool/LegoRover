@@ -15,15 +15,7 @@ import LaserFinder
 import ContourFinder
 import FaceDetector
 import os
-try:
-    from config import roverconfig
-except:
-    roverconfig = { "Streamer": {"StreamerImage": "/tmp/stream/pic.jpg", "StreamerLib": "/tmp/stream"},
-                "Vision": {"WriteRawImageToFile": False, "WriteCvImageToFile": False},
-                }
-#from Logger import Logger
-import SignFinder
-import io
+from RoverConfig import config
 
 
 class Vision(object):
@@ -32,7 +24,7 @@ class Vision(object):
         print "Vision object started..."
         self._seqno = 0
         #self._log = Logger.Logger("Vision")
-        self._contourFinder = ContourFinder.ContourFinder()
+        #self._contourFinder = ContourFinder.ContourFinder()
         #self._faceDetector = FaceDetector.FaceDetector()
         self._cam = PiCamera()
         self._cam.resolution = resolution
@@ -68,16 +60,16 @@ class Vision(object):
         self._rawCapture.seek(0)
         self._frame = frame.array
 
-        if roverconfig["Vision"]["WriteRawImageToFile"]:
+        if config["Vision"]["WriteRawImageToFile"]:
             cv2.imwrite("/home/pi/LegoRover/Imgs/camseq"+str(self._seqno)+".jpg",self._frame )
         #TODO: deliver found obstacles back to main-loop or sensor-module
         #self._signFinder.update(self._frame)
-        self._contourFinder.update(self._frame)
+        #self._contourFinder.update(self._frame)
         #self._faceDetector.update(frame)
         #self._laserfinder.update(frame)
         #self._log.info("Update finnished")
         #TODO: return detected obstacles etc
-        #return self._frame
+        return self._frame
 
     def draw(self, frame):
         #self._log.info("Draw started")
@@ -85,7 +77,7 @@ class Vision(object):
         print "Vision framerate: " + str(framerate)
         self._lastframetime= time.time()
         #frame = self._signFinder.draw(frame)
-        self._contourFinder.draw(frame)
+        #self._contourFinder.draw(frame)
        # frame = self._faceDetector.draw(frame)
         #frame = self._laserfinder.draw(frame)
 
@@ -93,10 +85,10 @@ class Vision(object):
         cv2.line(frame,(self._center[0]-20,self._center[1]),(self._center[0]+20, self._center[1]),(255,255,255),2)
         cv2.line(frame,(self._center[0],self._center[1]-20),(self._center[0],self._center[1]+20),(255,255,255),2)
         #cv2.line(frame, self._laserfinder._point, self._center,(0,255,0),2)
-        cv2.putText(frame,"Streamer: " + roverconfig["Streamer"]["StreamerImage"] + " Current framerate: " + str(round(framerate, 2)), (5,20),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 2)
+        cv2.putText(frame,"Streamer: " + config["Streamer"]["StreamerImage"] + " Current framerate: " + str(round(framerate, 2)), (5,20),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 2)
         #Draw to streamer lib to 'publish'
-        cv2.imwrite(roverconfig["Streamer"]["StreamerImage"],frame)
-        if roverconfig["Vision"]["WriteCvImageToFile"]:
+        cv2.imwrite(config["Streamer"]["StreamerImage"],frame)
+        if config["Vision"]["WriteCvImageToFile"]:
             cv2.imwrite("/home/pi/LegoRover/Imgs/cvseq"+str(self._seqno)+".jpg",frame)
         self._seqno = self._seqno+1 #Used globally but set here        #TODO: set up a defined (max) framerate from config
         #self._log.info("Draw finnished")

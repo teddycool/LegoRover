@@ -3,7 +3,6 @@ __author__ = 'teddycool'
 import os, sys
 from MainLoopLcm import MainLoop
 from Logger import Logger
-import thread
 
 class Main(object):
 
@@ -17,14 +16,10 @@ class Main(object):
         running=True
         frames = 0
 
-        print "Starting new thread for each sensor/sensorarray"
-        thread.start_new_thread(self._mainloop.update, (self._mainloop._us,))
         while running:
             try:
-
-                #self._mainloop.update()
-                self._mainloop.draw()
-                #print "End of Main..."
+                frame = self._mainloop.update()
+                self._mainloop.draw(frame)
             except Exception as e:
                 running = False
                 print str(e)

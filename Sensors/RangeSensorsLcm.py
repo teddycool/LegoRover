@@ -6,7 +6,8 @@
 import time
 import cv2
 import lcm
-from LCM import usdistance
+from LCM.usdistance import usdistance
+
 
 class RangeSensor(object):
 
@@ -24,7 +25,7 @@ class RangeSensor(object):
 
         self._gpio.output(self._TRIG, False)
 
-        self._msg = usdistance.usdistance()
+        self._msg = usdistance()
         self._msg.name = self._channelName
         self._msg.enabled = True
 
@@ -61,6 +62,7 @@ class RangeSensor(object):
         distance = round(distance, 2)
         self._lastrange = distance
         self._msg.distance = self._lastrange
+        print "Lastrange: " + str(self._lastrange)
 
         #TODO: Fix history
 
@@ -68,24 +70,24 @@ class RangeSensor(object):
 class RangeSensorsLcm(object):
     
     def __init__(self, gpio, rangesensorlist):
+        self._gpio = gpio
+        self._gpio.setmode(self._gpio.BCM)
         self._rangeSensors = []
+        for rangesensordef in rangesensorlist:
+            self._rangeSensors.append(RangeSensor(self._gpio,rangesensordef)
+            )
         self._lc = lcm.LCM()
-
-        for rangesensor in rangesensorlist:
-            self._rangeSensors.append(RangeSensor(gpio,rangesensor))
-        
         print "Stabilizing rangesensors...."
         time.sleep(2)
 
        
-    def update(self, kwarg):
-        while 1:
-            #print "Update in the new thread..."
-            for range in self._rangeSensors:
-                range.update()
-                self._lc.publish(range._channelName, range._msg.encode())
-                #print "Distance RangeSensor pin " + str(range._ECHO) + ": " + range._channelName
-                time.sleep(0.05)
+    def update(self):
+        for range in self._rangeSensors:
+           # print "Range update...   "
+            range.update()
+            self._lc.publish(range._channelName, range._msg.encode())
+            print "Published distance RangeSensor for pin " + str(range._ECHO) + ": " + range._channelName + " -> " + str(range._msg.distance)
+            time.sleep(0.1)
 
 
 
@@ -94,24 +96,11 @@ if __name__ == '__main__':
     print "Testcode for range sensor"
     import lcm
     import RPi.GPIO as GPIO
-    import thread
     GPIO.setmode(GPIO.BCM)
-    #Fix to use import from correct package...
-    def my_handler(channel, data):
-        msg = usdistance.usdistance.decode(data)
-        print("Received message on channel \"%s\"" % channel)
-        print("   name        = '%s'" % msg.name)
-        print("   distance    = %s" % str(msg.distance))
-        print("   enabled     = %s" % str(msg.enabled))
-
-    lc = lcm.LCM()
     rangsensors = RangeSensorsLcm(GPIO, [["RS1", 23,24],["RS2", 20,21]])
-    subscription1 = lc.subscribe("RS1", my_handler)
-    subscription1 = lc.subscribe("RS2", my_handler)
-    thread.start_new_thread(rangsensors.update,(None,) )
     try:
         while 1:
-            lc.handle()
+            rangsensors.update()
             time.sleep(0.1)
 
     except Exception as e:

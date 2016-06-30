@@ -4,7 +4,7 @@ Using sensors and openCV for image analyze and obstacle detection. The openCV st
 
 
 Using LCM for sensordata
-Each sensortype has its own messagetype and publish this as fast as possible from a separate thread started in MainLcm
+Each sensortype has its own messagetype and publish this as fast as possible from a separate thread started in MainLoopLcm
 Msg-channels are used for different type of values, ie US sensormessages is the same but channel is different for front and rear values
 
 

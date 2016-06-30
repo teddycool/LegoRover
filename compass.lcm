@@ -1,0 +1,9 @@
+package LCM;
+
+struct compass
+{
+    double   bearing;
+    double   compass[3];
+    string   name;
+    boolean  enabled;
+}
