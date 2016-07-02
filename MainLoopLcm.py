@@ -21,24 +21,28 @@ class MainLoop(object):
         self._gpio.setmode(self._gpio.BCM)
 
         self._sensors = Sensors.Sensors(self._gpio)
-        self._vision = Vision.Vision((640,480))
+        self._vision = Vision.Vision((1024,768))
        #self._compass =
 
     def initialize(self):
         print "MainLoop LCM init..."
         print "Starting timers..."
         self.time=time.time()
-        self._vision.initialize()
+        print "Kickstart runner for RangeSensors in separate process"
+        os.system('sudo python RangeSensorsLcm.py &')
+        frame = self._vision.initialize()
         self._sensors.initialize()
-        #print "Kickstart threads for each sensor/sensorarray"
+
         #print "Starting new thread for electronic compass"
+        print "MainLoop initialized"
+        return frame
 
 
     def draw(self,frame):
         #Handle values...
-        frame = self._sensors.draw(frame)
-        frame = self._sensors.draw(frame)
-        frame = self._vision.draw(frame)
+        self._sensors.draw(frame)
+       # frame = self._sensors.draw(frame)
+        self._vision.draw(frame)
         return
 
     def update(self):

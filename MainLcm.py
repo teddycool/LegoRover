@@ -15,7 +15,7 @@ class Main(object):
         self._mainloop.initialize()
         running=True
         frames = 0
-
+        print "Start running..."
         while running:
             try:
                 frame = self._mainloop.update()

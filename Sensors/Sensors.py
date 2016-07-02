@@ -1,6 +1,6 @@
 __author__ = 'teddycool'
 #Manage all sensors
-import RangeSensorsLcm
+#import RangeSensorsLcm
 import copy
 import time
 import lcm
@@ -37,10 +37,13 @@ class Sensors(object):
     def update(self):
         self._log.info("Sensors update started")
         self._lc.handle()
+        print "Handled update..."
+        self._log.info("Handled update...")
+
 
 
     def draw(self, frame):
-        self._log.info("Sensors draw started")
+        #self._log.info("Sensors draw started")
         index = 10
         for channel in self.sensorvaluesdict:
             cv2.putText(frame, channel + ": " + str(self.sensorvaluesdict[channel]["Current"]), (index,50),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 2)
@@ -60,9 +63,10 @@ class Sensors(object):
 #private callback functions
     def _usd_handler(self, channel, data):
         print("Received message on channel \"%s\"" % channel)
+        self._log.info("Received message on channel \"%s\"" % channel)
         msg = usdistance.usdistance.decode(data)
         self.sensorvaluesdict[channel]["Current"] = msg.distance
         self._updateValuesList(msg.distance, self.sensorvaluesdict[channel]["TrendList"])
-        print str(self.sensorvaluesdict[channel])
-
+        print channel + ": " + str(self.sensorvaluesdict[channel])
+        self._log.info(channel + ": " + str(self.sensorvaluesdict[channel]))
 

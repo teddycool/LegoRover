@@ -45,7 +45,9 @@ class Vision(object):
         print "Vision initialised"
         self._lastframetime = time.time()
         self._imagegenerator = self._cam.capture_continuous(self._rawCapture, format="bgr", use_video_port=True)
+        frame = self.update()
        # self._signFinder.initialize()
+        return frame
 
 
 
