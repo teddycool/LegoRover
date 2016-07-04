@@ -2,7 +2,7 @@ __author__ = 'teddycool'
 
 import RPi.GPIO as GPIO
 
-import RangeSensorsLcm
+from Sensors import RangeSensorsLcm
 
 GPIO.setmode(GPIO.BCM)
 import time

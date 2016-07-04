@@ -28,6 +28,7 @@ class RangeSensor(object):
         self._msg = usdistance.usdistance()
         self._msg.name = self._channelName
         self._msg.enabled = True
+        self._msg.distance = 0
 
         print "Started range-sensor on pin: " + str(self._ECHO) + " for msg channel " + self._channelName
 
@@ -41,13 +42,13 @@ class RangeSensor(object):
         # TODO: fix a timeout...
         while self._gpio.input(self._ECHO) == 0:
             echo_start = time.time()
-            #if time.time() - pulse_start > 0.1:
-            #    break
+            if time.time() - pulse_start > 0.1:
+                break
 
         while self._gpio.input(self._ECHO) == 1:
             echo_end = time.time()
-            #if time.time() - pulse_start > 0.2:
-            #    break
+            if time.time() - pulse_start > 0.2:
+                break
 
         pulse_duration_max = echo_end - pulse_start
         pulse_duration_min = echo_start - pulse_start
@@ -62,8 +63,6 @@ class RangeSensor(object):
         distance = round(distance, 2)
         self._lastrange = distance
         self._msg.distance = self._lastrange
-        #print "Lastrange: " + str(self._lastrange)
-
         #TODO: Fix history
 
 
@@ -74,27 +73,26 @@ class RangeSensorsLcm(object):
         self._gpio.setmode(self._gpio.BCM)
         self._rangeSensors = []
         for rangesensordef in rangesensorlist:
-            self._rangeSensors.append(RangeSensor(self._gpio,rangesensordef)
-            )
+            self._rangeSensors.append(RangeSensor(self._gpio,rangesensordef))
         self._lc = lcm.LCM()
         print "Stabilizing rangesensors...."
         time.sleep(2)
 
        
     def update(self):
+        ranges = "Distances: "
         for range in self._rangeSensors:
-           # print "Range update...   "
-            range.update()
-            self._lc.publish(range._channelName, range._msg.encode())
-            print "Published distance RangeSensor for pin " + str(range._ECHO) + ": " + range._channelName + " -> " + str(range._msg.distance)
-        time.sleep(0.2)
+           range.update()
+           self._lc.publish(range._channelName, range._msg.encode())
+           ranges = ranges + range._channelName + " -> " + str(range._msg.distance) + " "
+        print ranges
 
 
 
         
 if __name__ == '__main__':
     print "RangeSensors runner started and will publish to LCM channels..."
-    import lcm
+    import LCM
     import RPi.GPIO as GPIO
     GPIO.setmode(GPIO.BCM)
     rangsensors = RangeSensorsLcm(GPIO, [["RS1", 23,24],["RS2", 20,21]])

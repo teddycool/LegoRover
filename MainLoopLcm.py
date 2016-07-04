@@ -29,7 +29,7 @@ class MainLoop(object):
         print "Starting timers..."
         self.time=time.time()
         print "Kickstart runner for RangeSensors in separate process"
-        os.system('sudo python RangeSensorsLcm.py &')
+        os.system('sudo python UsMain.py &')
         frame = self._vision.initialize()
         self._sensors.initialize()
 
