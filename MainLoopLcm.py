@@ -32,16 +32,16 @@ class MainLoop(object):
         os.system('sudo python UsMain.py &')
         frame = self._vision.initialize()
         self._sensors.initialize()
-
         #print "Starting new thread for electronic compass"
         print "MainLoop initialized"
+        #TODO: Initialize vision in separate process and take care of vision-data (rectangles) by using LCM
         return frame
 
 
     def draw(self,frame):
         #Handle values...
         self._sensors.draw(frame)
-       # frame = self._sensors.draw(frame)
+        frame = self._sensors.draw(frame)
         self._vision.draw(frame)
         return
 
