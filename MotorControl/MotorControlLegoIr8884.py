@@ -9,6 +9,7 @@ class MotorControlLegoIr8884 (IMotionControl):
 
     def __init__(self, GPIO):
         super(MotorControlLegoIr8884, self).__init__()
+        self._controlStates = {'LeftOn': True,'LeftRev': False, 'RightOn':True,  'RightRev': False}
 
     def irCommand(self, leftWheelSpeed, rightWheelSpeed):
         const_nible1 = 0x4
