@@ -5,12 +5,12 @@ __author__ = 'teddycool'
 # http://blog.miguelgrinberg.com/post/stream-video-from-the-raspberry-pi-camera-to-web-browsers-even-on-ios-and-android
 import time
 import sys
-
 import cv2
-
-from picamera import PiCamera
+import numpy as np
+import argparse
+#from picamera import PiCamera
 #import picamera.array
-from picamera.array import PiRGBArray
+#from picamera.array import PiRGBArray
 import LaserFinder
 import ContourFinder
 import FaceDetector
@@ -34,10 +34,10 @@ class Vision(object):
         #self._log = Logger.Logger("Vision")
         self._contourFinder = ContourFinder.ContourFinder()
         #self._faceDetector = FaceDetector.FaceDetector()
-        self._cam = PiCamera()
-        self._cam.resolution = resolution
-        self._cam.framerate = 10
-        self._rawCapture = PiRGBArray(self._cam, size=resolution)
+#        self._cam = PiCamera()
+ #       self._cam.resolution = resolution
+  #      self._cam.framerate = 10
+  #      self._rawCapture = PiRGBArray(self._cam, size=resolution)
         self._center = (resolution[0]/2, resolution[1]/2)
         #self._laserfinder = LaserFinder.LaserFinder()
        # self._signFinder = SignFinder.SignFinder()
@@ -52,7 +52,7 @@ class Vision(object):
     def initialize(self):
         print "Vision initialised"
         self._lastframetime = time.time()
-        self._imagegenerator = self._cam.capture_continuous(self._rawCapture, format="bgr", use_video_port=True)
+#        self._imagegenerator = self._cam.capture_continuous(self._rawCapture, format="bgr", use_video_port=True)
        # self._signFinder.initialize()
 
 
@@ -108,16 +108,47 @@ class Vision(object):
 
     def __del__(self):
         print "Vision object deleted..."
-        self._cam.close()
+      #  self._cam.close()
 
 
 
 
 if __name__ == '__main__':
     print "Testcode for Vision"
-    import RPi.GPIO as GPIO
+#    import RPi.GPIO as GPIO
+ #   GPIO.setmode(GPIO.BCM)
 
-    GPIO.setmode(GPIO.BCM)
+    rgb_img = cv2.imread('test.jpg')
+    white = cv2.imread('white.jpg')
+
+    hsv = cv2.cvtColor(rgb_img, cv2.COLOR_BGR2HSV)
+    lower_red = np.array([0, 0, 0])
+    upper_red = np.array([100, 100, 100])
+
+    mask = cv2.inRange(hsv, lower_red, upper_red)
+    res = cv2.bitwise_and(white, white, mask=mask)
+
+    img = cv2.cvtColor(res, cv2.COLOR_BGR2GRAY)
+    _, contours, _ = cv2.findContours(img.copy(), cv2.RETR_CCOMP, cv2.CHAIN_APPROX_TC89_L1)
+    print len(contours)
+    centres = []
+    for i in range(len(contours)):
+        if cv2.contourArea(contours[i]) < 100:
+            continue
+        moments = cv2.moments(contours[i])
+        if moments['m00']!= 0:
+            centres.append((int(moments['m10'] / moments['m00']), int(moments['m01'] / moments['m00'])))
+            cv2.circle(rgb_img, centres[-1], 3, (255, 255, 0), -1)
+
+    print centres
+
+    cv2.imshow('image', rgb_img)
+   # cv2.imwrite('output.png', img)
+
+
+
+    cv2.waitKey(0)
+
 
     vision= Vision( (640,480))
     vision.initialize()
@@ -129,6 +160,6 @@ if __name__ == '__main__':
             vision.draw(frame)
             time.sleep(0.2)
     except:
-        GPIO.cleanup()
+    #    GPIO.cleanup()
         e = sys.exc_info()[0]
         print e
