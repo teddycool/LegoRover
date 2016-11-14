@@ -18,32 +18,32 @@ class MainLoop(object):
         GPIO.setmode(GPIO.BCM)
         self._gpio = GPIO
         self._driver = Driver.Driver(self._gpio)
-        #self._sensors = Sensors.Sensors(self._gpio)
         self._vision = Vision.Vision((640,480))
-
+        self._vu_time = 0;
 
     def initialize(self):
         print "MainLoop init..."
         print "Starting timers..."
         self.time=time.time()
         self._vision.initialize()
-       # self._sensors.initialize()
         self._driver.initialize()
         print "Rover started at ", self.time
 
     def update(self):
-        #TODO: add update-freq from config
-        #self._sensors.update()
-        #TODO: add vision update...
+        t_start = time.time()
         self._vision.update()
-       # self._driver.update(self._sensors.sensorvaluesdict)
-        time.sleep(0.01)
+        self._vu_time = (time.time()-t_start)*0.25 + self._vu_time*0.75
+        print "Vision update: " + str(self._vu_time)
+        target = self._vision.getCurrentTargetX()
+        targetFound = self._vision.getTargetFound()
+        self._driver.update(target, targetFound)
 
     def draw(self):
         #TODO: add update-freq from config
         frame = self._vision.getCurrentFrame()
-        #frame = self._sensors.draw(frame)
-        frame = self._driver.draw(frame)
+        target = self._vision.getCurrentTargetX()
+        targetFound = self._vision.getTargetFound()
+        frame = self._driver.draw(frame, target, targetFound)
         frame = self._vision.draw(frame)
 
     def __del__(self):

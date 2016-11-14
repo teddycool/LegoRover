@@ -9,7 +9,7 @@ class Main(object):
     def __init__(self):
         print "Init Main object..."
         self._mainloop =  MainLoop()
-        self._log = Logger.Logger('main')
+        #self._log = Logger.Logger('main')
 
 
     def run(self):
@@ -20,7 +20,6 @@ class Main(object):
             try:
                 self._mainloop.update()
                 self._mainloop.draw()
-                print "End of Main..."
             except Exception as e:
                 running = False
                 print str(e)

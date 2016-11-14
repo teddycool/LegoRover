@@ -24,7 +24,7 @@ import io
 
 
 class Vision(object):
-    test = True
+    test = False
 
     def __init__(self, resolution):
         time.sleep(2)
@@ -32,13 +32,18 @@ class Vision(object):
         self._seqno = 0
         #self._log = Logger.Logger("Vision")
         self.white = cv2.imread('white.jpg', 0)
-        if(self.test):
+        self.cord_x = 0
+        self.cord_y = 0
+        self._lastframetime = 0
+        if(not self.test):
             self._cam = PiCamera()
             self._cam.resolution = resolution
-            print  resolution
+            self._cam.hflip = True
+            self._cam.vflip = True
             self._cam.framerate = 10
             self._rawCapture = PiRGBArray(self._cam, size=resolution)
         self._center = (resolution[0]/2, resolution[1]/2)
+        self.targetFound = False
 
         print "Starting streamer..."
         print os.system('sudo mkdir /tmp/stream')
@@ -50,31 +55,21 @@ class Vision(object):
         print "Vision initialised"
         self._lastframetime = time.time()
         self.loopTime = 1
-        if (self.test):
+        if (not self.test):
             self._imagegenerator = self._cam.capture_continuous(self._rawCapture, format="bgr", use_video_port=True)
 
     def update(self):
-        print "Vision update"
         #self._log.info("Update started")
          #TODO: make threaded in exception catcher
         # https://picamera.readthedocs.org/en/release-1.10/recipes2.html#rapid-capture-and-processing
-        if (self.test):
+        if (not self.test):
             frame = self._imagegenerator.next()
             self._rawCapture.truncate()
             self._rawCapture.seek(0)
             self._frame = frame.array
 
-        if roverconfig["Vision"]["WriteRawImageToFile"]:
-            cv2.imwrite("/home/pi/LegoRover/Imgs/camseq"+str(self._seqno)+".jpg",self._frame )
-
-        #TODO: deliver found obstacles back to main-loop or sensor-module
-        #self._signFinder.update(self._frame)
-        #self._contourFinder.update(self._frame)
-        #self._faceDetector.update(frame)
-        #self._laserfinder.update(frame)
-        #self._log.info("Update finnished")
-        #TODO: return detected obstacles etc
-        #return self._frame
+        #if roverconfig["Vision"]["WriteRawImageToFile"]:
+        #    cv2.imwrite("/home/pi/LegoRover/Imgs/camseq"+str(self._seqno)+".jpg",self._frame )
 
     def draw(self, frame):
         #self._log.info("Draw started")
@@ -83,71 +78,96 @@ class Vision(object):
         print "Vision looptime: " + str(self.loopTime)
         self._lastframetime= time.time()
 
-
         # Mask out black color and turn the mask to an black and white picture
-        self.hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        mod_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        mod_frame = cv2.cvtColor(mod_frame, cv2.COLOR_GRAY2BGR)
+        mod_frame = cv2.blur(mod_frame, (10, 10))
+        self.hsv = cv2.cvtColor(mod_frame, cv2.COLOR_BGR2HSV)
         lower_black = np.array([0, 0, 0])
-        upper_black = np.array([100, 100, 100])
+        upper_black = np.array([20,20,20])
         self.mask = cv2.inRange(self.hsv, lower_black, upper_black)
         self.res = cv2.bitwise_and(self.white, self.white, mask=self.mask)
 
+        maskSize = cv2.countNonZero(self.mask)
+
         # Find regions of black and find their center coordinats
-        (contours, _) = cv2.findContours(self.res.copy(), cv2.RETR_CCOMP, cv2.CHAIN_APPROX_TC89_L1)
-        centres = []
+        (obj_contours, _) = cv2.findContours(self.res.copy(), cv2.RETR_CCOMP, cv2.CHAIN_APPROX_TC89_L1)
+        self.centres = []
         biggestArea = 0
         biggestAreaIndex = 0
-        for i in range(len(contours)):
-            area = cv2.contourArea(contours[i])
+        self.targetFound = False
+        for ind in range(len(obj_contours)):
+            area = cv2.contourArea(obj_contours[ind])
+            my_moments = cv2.moments(obj_contours[ind])
+            my_centres = []
+            if my_moments['m00'] != 0:
+                my_centres.append(
+                    (int(my_moments['m10'] / my_moments['m00']), int(my_moments['m01'] / my_moments['m00'])))
+                cv2.circle(frame, my_centres[0], 10, (255, 255, 0), -1)
+
             if area < 100:
                 continue
             if area > biggestArea:
                 biggestArea = area
-                biggestAreaIndex = i
+                biggestAreaIndex = ind
+        if biggestAreaIndex != 0:
+            print biggestAreaIndex
+            self.targetFound = True
+            self.centres = []
+            obj_moments = cv2.moments(obj_contours[biggestAreaIndex])
+            if obj_moments['m00'] != 0:
+                self.centres.append((int(obj_moments['m10'] / obj_moments['m00']), int(obj_moments['m01'] / obj_moments['m00'])))
+                self.xy = self.centres[0]
+                print "Centers: " + str(self.xy)
+                a = self.xy[0] - 320
+                self.cord_x = a #4*self.cord_x/5 + a/5
+                b = 240 - self.xy[1]
+                self.cord_y = b #4 * self.cord_y/5 + b/5
+                cv2.circle(frame, self.centres[0], 10, (55, 55, 0), -1)
 
-        moments = cv2.moments(contours[biggestAreaIndex])
-        if moments['m00'] != 0:
-            centres.append((int(moments['m10'] / moments['m00']), int(moments['m01'] / moments['m00'])))
+        if self.targetFound:
+            print "Area size=" + str(biggestArea) + " x=" + str(self.cord_x) + " y=" + str(self.cord_y)
+            cv2.putText(frame, "Area size: " + str(biggestArea) + " px", (100, 80), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                        (255, 255, 255), 2)
+            cv2.putText(frame, "Target position x: " + str(a) + " y:" + str(b), (100, 120), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                        (255, 255, 255), 2)
+        else:
+            print "No target found"
+            cv2.putText(frame, "No target found", (100, 80), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                        (255, 255, 255), 2)
 
-        xy = centres[0]
-        print "Area size=" + str(biggestArea) + " x=" + str(xy[0] - 320) + " y=" + str(240 - xy[1])
+        cv2.putText(frame, "Mask size: " + str(maskSize) + " px", (100, 100), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
 
-        #draw cross for center of image
-        #cv2.line(frame,(self._center[0]-20,self._center[1]),(self._center[0]+20, self._center[1]),(255,255,255),2)
-        #cv2.line(frame,(self._center[0],self._center[1]-20),(self._center[0],self._center[1]+20),(255,255,255),2)
-
-        #cv2.putText(frame,"Streamer: " + roverconfig["Streamer"]["StreamerImage"] + " Current framerate: " + str(round(framerate, 2)), (5,20),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 2)
-        #Draw to streamer lib to 'publish'
-        cv2.imwrite(roverconfig["Streamer"]["StreamerImage"],frame)
-        if roverconfig["Vision"]["WriteCvImageToFile"]:
-            cv2.imwrite("/home/pi/LegoRover/Imgs/cvseq"+str(self._seqno)+".jpg",frame)
-        self._seqno = self._seqno+1 #Used globally but set here        #TODO: set up a defined (max) framerate from config
-        #self._log.info("Draw finnished")
-
+        cv2.imwrite("/home/pi/myproject/html/frame.jpg", frame)
+        cv2.imwrite("/home/pi/myproject/html/res.jpg", self.res)
 
     def getCurrentFrame(self):
         return self._frame
 
+    def getCurrentTargetX(self):
+        return self.cord_x
+
+    def getCurrentTargetY(self):
+        return self.cord_y
+
+    def getTargetFound(self):
+        return self.targetFound
 
     def __del__(self):
         print "Vision object deleted..."
         self._cam.close()
 
-
-
-
 if __name__ == '__main__':
     print "Testcode for Vision"
-#    import RPi.GPIO as GPIO
- #   GPIO.setmode(GPIO.BCM)
 
-    rgb_img = cv2.imread('test.jpg')
+    rgb_img = cv2.imread('cam.jpg')
     white = cv2.imread('white.jpg')
 
     hsv = cv2.cvtColor(rgb_img, cv2.COLOR_BGR2HSV)
-    lower_red = np.array([0, 0, 0])
-    upper_red = np.array([100, 100, 100])
+    lower_red = np.array([30, 30, 30])
+    upper_red = np.array([255, 255, 255])
 
-    mask = cv2.inRange(hsv, lower_red, upper_red)
+    mask = cv2.inRange(rgb_img, lower_red, upper_red)
     res = cv2.bitwise_and(white, white, mask=mask)
 
     img = cv2.cvtColor(res, cv2.COLOR_BGR2GRAY)
@@ -165,21 +185,23 @@ if __name__ == '__main__':
             biggestArea = area
             biggestAreaIndex = i
 
-    moments = cv2.moments(contours[biggestAreaIndex])
-    if moments['m00']!= 0:
-        centres.append((int(moments['m10'] / moments['m00']), int(moments['m01'] / moments['m00'])))
-        cv2.circle(rgb_img, centres[-1], 3, (255, 255, 0), -1)
+    if biggestAreaIndex != 0:
+        moments = cv2.moments(contours[biggestAreaIndex])
+        if moments['m00']!= 0:
+            centres.append((int(moments['m10'] / moments['m00']), int(moments['m01'] / moments['m00'])))
+            cv2.circle(rgb_img, centres[-1], 3, (255, 255, 0), -1)
 
-    print "Area"
-    print biggestArea
-    print biggestAreaIndex
+        print "Area"
+        print biggestArea
+        print biggestAreaIndex
 
-    xy = centres[0]
-    print xy
-    print "x " + str(xy[0]-320)
-    print "y " + str(240-xy[1])
+#    xy = centres[0]
+   # print xy
+  #  print "x " + str(xy[0]-320)
+   # print "y " + str(240-xy[1])
 
-
+    cv2.imshow('image3', mask)
+    cv2.imshow('image2', img)
     cv2.imshow('image', rgb_img)
    # cv2.imwrite('output.png', img)
 

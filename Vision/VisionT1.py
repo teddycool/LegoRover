@@ -3,7 +3,7 @@ import socket
 import struct
 import time
 import threading
-import picamera
+from picamera import PiCamera
 import cv2
 
 client_socket = socket.socket()
@@ -61,7 +61,7 @@ try:
                 time.sleep(0.1)
             finish = time.time()
 
-    with picamera.PiCamera() as camera:
+    with PiCamera() as camera:
         pool = [ImageStreamer() for i in range(4)]
         camera.resolution = (640, 480)
         camera.framerate = 30
