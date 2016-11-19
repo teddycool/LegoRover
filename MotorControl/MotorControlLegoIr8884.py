@@ -63,7 +63,7 @@ class MotorControlLegoIr8884 (IMotionControl):
     def setMotion(self, rotationspeed, frontSpeed):
         # print "MotorControlLegoIr8884 setMotion..."
 
-        frontSpeed = -frontSpeed
+        #frontSpeed = -frontSpeed
         rotationspeed = -rotationspeed
 
         ## calculate speed for each wheel according to the rotation and front speeds
@@ -71,7 +71,7 @@ class MotorControlLegoIr8884 (IMotionControl):
         rightWheelSpeed = frontSpeed + rotationspeed
 
         # rightWheelSpeed is oposite due to the motor placement
-        #rightWheelSpeed = -rightWheelSpeed
+        rightWheelSpeed = -rightWheelSpeed
 
         # convert from WheelSpeed to hex commands
         irCMD = self.irCommand(leftWheelSpeed, rightWheelSpeed)

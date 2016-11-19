@@ -11,7 +11,6 @@ class RangeSensor(object):
         self.ECHO = echopin
         self._lastrange = 0
 
-        
         print "Distance Measurement initialized for pin: " + str(echopin)
         
         self._gpio.setup(self.TRIG,self._gpio.OUT)
@@ -20,7 +19,6 @@ class RangeSensor(object):
         self._gpio.output(self.TRIG, False)
         print "Stabilizing range-sensor on pin: " + str(echopin)
         time.sleep(2)
-
        
     def update(self):
         self._gpio.output(self.TRIG, True)

@@ -30,13 +30,13 @@ class Driver(object):
     def update(self, targetCoordinatesX, targetFound):
         if targetFound:
             if targetCoordinatesX < -200:
-                self._mc.setMotion(1, 0)
+                self._mc.setMotion(10, 0)
                 self.direction = "Turning left"
             elif targetCoordinatesX > 200:
-                self._mc.setMotion(-1, 0)
+                self._mc.setMotion(-10, 0)
                 self.direction = "Turning right"
             else:
-                self._mc.setMotion(0, 1)
+                self._mc.setMotion(0, 10)
                 self.direction = "Moving forward"
 
         return
